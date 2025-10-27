@@ -1,0 +1,58 @@
+.App {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #111;
+  color: #ddd;
+  font-family: Arial, sans-serif;
+}
+
+h2 {
+  margin: 10px;
+}
+
+.controls {
+  padding: 10px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.controls input {
+  flex: 1;
+  padding: 6px 8px;
+  background: #222;
+  border: 1px solid #444;
+  color: #ddd;
+}
+
+button {
+  background: #2480ff;
+  color: #fff;
+  border: none;
+  padding: 6px 12px;
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: .6;
+  cursor: not-allowed;
+}
+
+.status {
+  font-weight: bold;
+}
+
+.status.connected { color: #2ecc71; }
+.status.connecting { color: #f1c40f; }
+.status.error { color: #e74c3c; }
+.status.disconnected { color: #bbb; }
+
+.display {
+  flex: 1;
+  background: #000;
+  overflow: hidden;
+}
+.display :focus {
+  outline: none;
+}

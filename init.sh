@@ -1,0 +1,6 @@
+#!/bin/sh
+set -ex
+echo "===> Generating Guacamole DB schema (PostgreSQL)..."
+/opt/guacamole/bin/initdb.sh --postgresql > /init/01-guacamole.sql
+echo "✅ Schema written to /init/01-guacamole.sql"
+ls -l /init

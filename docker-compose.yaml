@@ -1,0 +1,117 @@
+version: "3.9"
+networks:
+  tfm-net:
+    driver: bridge
+services:
+  # 1) One-shot: generate Guac schema into a shared volume
+  guacdb-init:
+    image: guacamole/guacamole:1.5.5
+    user: "0"
+    entrypoint: ["/bin/sh", "/init/init.sh"]
+    volumes:
+      - ./init.sh:/init/init.sh:ro   # simple script that runs initdb.sh --postgres > /init/01-guacamole.sql
+      - guac-init:/init
+    restart: "no"
+    networks: [tfm-net]
+
+  # 2) Postgres loads schema on first boot
+  postgres:
+    networks: [tfm-net]
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: guacamole
+      POSTGRES_PASSWORD: guacpass
+      POSTGRES_DB: guacamole
+    volumes:
+      - guacdb:/var/lib/postgresql/data
+      - guac-init:/docker-entrypoint-initdb.d:ro
+    depends_on:
+      guacdb-init:
+        condition: service_completed_successfully
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U guacamole -d guacamole"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+
+  # 3) guacd
+  guacd:
+    networks: [tfm-net]
+    image: guacamole/guacd:1.5.5
+    restart: unless-stopped
+
+  # 4) Guacamole WebApp (optional if you use your Quarkus tunnel)
+  guacamole:
+    networks: [tfm-net]
+    image: guacamole/guacamole:1.5.5
+    environment:
+      GUACD_HOSTNAME: guacd
+      GUACD_PORT: 4822
+      POSTGRES_HOSTNAME: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_DATABASE: guacamole
+      POSTGRES_USER: guacamole
+      POSTGRES_PASSWORD: guacpass
+    depends_on:
+      guacd:
+        condition: service_started
+      postgres:
+        condition: service_healthy
+    ports:
+      - "8089:8080"   # Web UI + /guacamole/websocket-tunnel
+    restart: unless-stopped
+
+  # 5) Simple SSH server to test through guacd
+  sshd:
+    networks: [tfm-net]
+    image: linuxserver/openssh-server:latest
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - SUDO_ACCESS=true
+      - PASSWORD_ACCESS=true
+      - USER_NAME=user
+      - USER_PASSWORD=password
+    # ports: ["2222:2222"] # not needed on host; backend connects inside network
+    restart: unless-stopped
+
+  # 6) Your Quarkus backend exposing WS /ws/tunnel
+  backend:
+    networks: [tfm-net]
+    build:
+      context: ./backend
+    environment:
+      # Match @ConfigProperty("app.*") — Quarkus maps APP_GUACD_HOST -> app.guacd.host
+      APP_GUACD_HOST: guacd
+      APP_GUACD_PORT: "4822"
+      APP_SSH_HOST: sshd
+      APP_SSH_PORT: "2222"
+      APP_SSH_USER: user
+      APP_SSH_PASS: password
+    depends_on:
+      guacd:
+        condition: service_started
+      sshd:
+        condition: service_started
+    ports:
+      - "8081:8080"   # optional host access to backend
+    restart: unless-stopped
+
+  # 7) Frontend (served by Nginx)
+  frontend:
+    networks: [tfm-net]
+    build:
+      context: ./frontend
+    depends_on:
+      backend:
+        condition: service_started
+      guacamole:
+        condition: service_started
+    ports:
+      - "8088:80"
+    restart: unless-stopped
+
+volumes:
+  guacdb:
+  guac-init:
