@@ -1,7 +1,8 @@
-version: "3.9"
 networks:
   tfm-net:
     driver: bridge
+  clab:
+    external: true
 services:
   # 1) One-shot: generate Guac schema into a shared volume
   guacdb-init:
@@ -37,7 +38,7 @@ services:
 
   # 3) guacd
   guacd:
-    networks: [tfm-net]
+    networks: [tfm-net,clab]
     image: guacamole/guacd:1.5.5
     restart: unless-stopped
 
@@ -78,7 +79,7 @@ services:
 
   # 6) Your Quarkus backend exposing WS /ws/tunnel
   backend:
-    networks: [tfm-net]
+    networks: [tfm-net,clab]
     build:
       context: ./backend
     environment:

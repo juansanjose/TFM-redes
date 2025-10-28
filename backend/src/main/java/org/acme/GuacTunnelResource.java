@@ -78,6 +78,7 @@ public class GuacTunnelResource {
             cfg.setParameter("port", String.valueOf(sshPort));
             cfg.setParameter("username", sshUser);
             cfg.setParameter("password", sshPass);
+            cfg.setParameter("ignore-host-key", "true"); // demo SSH containers rotate host keys
 
             GuacamoleClientInformation info = new GuacamoleClientInformation();
             info.setOptimalResolution(1280);

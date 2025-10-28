@@ -46,6 +46,10 @@ RUN mvn -q -DskipTests package
 # === Runtime stage ===
 FROM eclipse-temurin:21-jre
 WORKDIR /app
+# Need an SSH client for connectivity checks against containerlab nodes
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends openssh-client && \
+    rm -rf /var/lib/apt/lists/*
 # copy the fast-jar structure
 COPY --from=build /app/target/quarkus-app/ /app/
 EXPOSE 8080

@@ -1,14 +1,34 @@
-# topology documentation: http://containerlab.dev/lab-examples/srl-ceos/
-name: srlceos01
+name: bgp01
 
 topology:
   nodes:
-    srl:
-      kind: nokia_srlinux
-      image: ghcr.io/nokia/srlinux:24.10
-    ceos:
-      kind: arista_ceos
-      image: ceos:4.32.0F
+    r1:
+      kind: linux
+      image: ghcr.io/srl-labs/frr:9.1.0
+      mgmt-ipv4: 172.20.20.11
+      env:
+        FRR_CONF: /etc/frr/frr.conf
+      binds:
+        - ./configs/r1/frr.conf:/etc/frr/frr.conf:ro
+
+    r2:
+      kind: linux
+      image: ghcr.io/srl-labs/frr:9.1.0
+      mgmt-ipv4: 172.20.20.12
+      env:
+        FRR_CONF: /etc/frr/frr.conf
+      binds:
+        - ./configs/r2/frr.conf:/etc/frr/frr.conf:ro
+
+    r3:
+      kind: linux
+      image: ghcr.io/srl-labs/frr:9.1.0
+      mgmt-ipv4: 172.20.20.13
+      env:
+        FRR_CONF: /etc/frr/frr.conf
+      binds:
+        - ./configs/r3/frr.conf:/etc/frr/frr.conf:ro
 
   links:
-    - endpoints: ["srl:ethernet-1/1", "ceos:eth1"]
+    - endpoints: ["r1:eth1","r2:eth1"]
+    - endpoints: ["r2:eth2","r3:eth1"]

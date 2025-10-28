@@ -1,0 +1,40 @@
+name: bgp01
+
+topology:
+  nodes:
+    r1:
+      kind: linux
+      image: quay.io/frrouting/frr:9.1.0
+      binds:
+        - ./configs/r1/frr.conf:/etc/frr/frr.conf:ro
+        - ./node-init.sh:/usr/local/bin/node-init.sh:ro
+      entrypoint: /bin/sh -lc
+      cmd: '/usr/local/bin/node-init.sh || (echo INIT_FAIL && sleep infinity)'
+      privileged: true
+      cap_add: [ NET_ADMIN, NET_RAW ]
+
+    r2:
+      kind: linux
+      image: quay.io/frrouting/frr:9.1.0
+      binds:
+        - ./configs/r2/frr.conf:/etc/frr/frr.conf:ro
+        - ./node-init.sh:/usr/local/bin/node-init.sh:ro
+      entrypoint: /bin/sh -lc
+      cmd: '/usr/local/bin/node-init.sh || (echo INIT_FAIL && sleep infinity)'
+      privileged: true
+      cap_add: [ NET_ADMIN, NET_RAW ]
+
+    r3:
+      kind: linux
+      image: quay.io/frrouting/frr:9.1.0
+      binds:
+        - ./configs/r3/frr.conf:/etc/frr/frr.conf:ro
+        - ./node-init.sh:/usr/local/bin/node-init.sh:ro
+      entrypoint: /bin/sh -lc
+      cmd: '/usr/local/bin/node-init.sh || (echo INIT_FAIL && sleep infinity)'
+      privileged: true
+      cap_add: [ NET_ADMIN, NET_RAW ]
+
+  links:
+    - endpoints: ["r1:eth1","r2:eth1"]
+    - endpoints: ["r2:eth2","r3:eth1"]

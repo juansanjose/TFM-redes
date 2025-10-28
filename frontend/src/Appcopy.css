@@ -1,0 +1,16 @@
+html, body, #root { height: 100%; margin: 0; background: #0b0b0b; color: #ddd; font-family: Inter, system-ui, Arial, sans-serif; }
+
+.layout { display: grid; grid-template-columns: 340px 1fr; height: 100%; }
+.tutorial { padding: 16px; border-right: 1px solid #2a2a2a; overflow: auto; }
+.tutorial h2 { margin-top: 0; }
+.tutorial pre { background: #111; padding: 8px; border-radius: 8px; overflow: auto; }
+
+.consoles { display: grid; grid-template-rows: 48px 1fr; height: 100%; }
+.tabs { display: flex; gap: 8px; padding: 8px; border-bottom: 1px solid #2a2a2a; }
+.tab { padding: 8px 12px; background: #1a1a1a; color: #ddd; border: 1px solid #333; border-radius: 8px; cursor: pointer; }
+.tab.active { background: #2a2a2a; }
+
+.panes { height: 100%; }
+.console-root { height: 100%; display: grid; grid-template-rows: 22px 1fr; }
+.console-status { font-size: 12px; padding: 2px 8px; color: #9fe29f; background: #121212; border-bottom: 1px solid #2a2a2a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.console-display { height: 100%; }
