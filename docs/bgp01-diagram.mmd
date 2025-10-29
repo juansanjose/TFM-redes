@@ -1,0 +1,15 @@
+graph LR
+    subgraph BGP01
+        R1((r1\nAS 65001))
+        R2((r2\nAS 65002))
+        R3((r3\nAS 65003))
+    end
+
+    R1 -- eth1 10.0.12.1/30 --- R2
+    R2 -- eth2 10.0.23.2/30 --- R3
+
+    R1:::loopback
+    R2:::loopback
+    R3:::loopback
+
+    classDef loopback fill:#2563eb,stroke:#1e293b,color:#f8fafc;

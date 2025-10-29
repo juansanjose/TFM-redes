@@ -29,6 +29,29 @@ chmod 644 /etc/frr/vtysh.conf 2>/dev/null || true
 chown frr:frr /etc/frr/frr.conf 2>/dev/null || true
 chmod 644 /etc/frr/frr.conf 2>/dev/null || true
 
+# Ensure FRR daemons file enables required processes
+if [ -f /etc/frr/daemons ]; then
+  ensure_daemon_flag() {
+    local key="$1"
+    local value="$2"
+    if grep -Eq "^${key}=" /etc/frr/daemons; then
+      sed -i "s#^${key}=.*#${key}=${value}#" /etc/frr/daemons
+    else
+      printf '%s=%s\n' "$key" "$value" >>/etc/frr/daemons
+    fi
+  }
+  ensure_daemon_flag zebra yes
+  ensure_daemon_flag bgpd yes
+  ensure_daemon_flag staticd yes
+  ensure_daemon_flag watchfrr yes
+
+  chmod 644 /etc/frr/daemons 2>/dev/null || true
+  chown frr:frr /etc/frr/daemons 2>/dev/null || true
+  log "Ensured zebra, bgpd, staticd, and watchfrr daemons are enabled"
+else
+  log "/etc/frr/daemons missing; unable to toggle daemon flags"
+fi
+
 # 2) Start FRR using image-provided startup
 #    Official images provide docker-start wrapper; fall back to frrinit.sh if present
 if [ -x /usr/lib/frr/docker-start ]; then

@@ -96,6 +96,11 @@ button:disabled {
   color: #9ca3af;
 }
 
+.console-status.status-connected { color: #38bdf8; }
+.console-status.status-connecting { color: #facc15; }
+.console-status.status-error { color: #f87171; }
+.console-status.status-disconnected { color: #9ca3af; }
+
 .console-display {
   flex: 1;
   min-height: 0;
@@ -152,6 +157,23 @@ button:disabled {
   color: #e2e8f0;
   font-size: 0.85rem;
   pointer-events: none;
+}
+
+.console-xterm-host {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+}
+
+.console-xterm-host .xterm {
+  padding: 8px 10px;
+  height: 100%;
+  width: 100%;
+}
+
+.console-xterm-host .xterm .xterm-viewport {
+  border-radius: 0;
 }
 
 .console-clipboard-message {
@@ -469,4 +491,194 @@ button:disabled {
 .lab-node-console-body .console-root {
   flex: 1;
   min-height: 0;
+}
+
+.lab-node-layout {
+  display: grid;
+  grid-template-columns: minmax(280px, 360px) 1fr;
+  gap: 20px;
+  height: 100%;
+}
+
+.lab-tutorial {
+  background: #111827;
+  border: 1px solid #1f2937;
+  border-radius: 12px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  overflow: auto;
+}
+
+.lab-tutorial-header h3 {
+  margin: 4px 0 0 0;
+}
+
+.lab-tutorial-subtitle {
+  margin: 4px 0 0 0;
+  color: #94a3b8;
+}
+
+.lab-tutorial-intro p {
+  margin: 0 0 8px 0;
+}
+
+.lab-task-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.lab-task {
+  border: 1px solid #1f2937;
+  border-radius: 10px;
+  background: #0b1223;
+  overflow: hidden;
+}
+
+.lab-task-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  color: #e2e8f0;
+  text-align: left;
+  padding: 12px 14px;
+  cursor: pointer;
+}
+
+.lab-task-header:focus {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+}
+
+.lab-task-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
+}
+
+.lab-task-summary h4 {
+  margin: 0;
+}
+
+.lab-task-command {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(37, 99, 235, 0.08);
+  border: 1px solid rgba(37, 99, 235, 0.3);
+  border-radius: 6px;
+  padding: 4px 6px;
+  font-size: 0.75rem;
+  color: #60a5fa;
+  max-width: 100%;
+}
+
+.lab-task-command code {
+  font-size: 0.75rem;
+  color: inherit;
+  overflow-wrap: anywhere;
+}
+
+.lab-task-copy {
+  background: #1d4ed8;
+  color: #f8fafc;
+  border: none;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.lab-task-copy:hover {
+  background: #2563eb;
+}
+
+.lab-task-copy.is-success {
+  background: #059669;
+}
+
+.lab-task-copy.is-error {
+  background: #dc2626;
+}
+
+.lab-task-index {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 1px solid #2563eb;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  color: #93c5fd;
+}
+
+.lab-task-toggle {
+  font-size: 1.2rem;
+  color: #60a5fa;
+}
+
+.lab-task-body {
+  padding: 0 14px 14px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: #cbd5f5;
+}
+
+.lab-task-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.lab-task-section h5 {
+  margin: 0;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #60a5fa;
+}
+
+.lab-task-section p {
+  margin: 0;
+}
+
+.lab-task-body pre {
+  margin: 0;
+  background: #0f172a;
+  border: 1px solid #1f2937;
+  border-radius: 6px;
+  padding: 8px;
+  font-size: 0.8rem;
+  color: #f8fafc;
+}
+
+.lab-task-reveal {
+  align-self: flex-start;
+  background: #2563eb;
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 0.8rem;
+}
+
+.lab-task.is-open {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.2);
+}
+
+@media (max-width: 1080px) {
+  .lab-node-layout {
+    grid-template-columns: 1fr;
+  }
 }

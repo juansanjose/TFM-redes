@@ -1,7 +1,7 @@
 // src/App.js
 import React from "react";
 import { Routes, Route, NavLink, Navigate } from "react-router-dom";
-import GuacConsole from "./components/GuacConsole";
+import SshConsole from "./components/SshConsole";
 import LabList from "./components/LabList";
 import LabNodeConsole from "./components/LabNodeConsole";
 import "./App.css";
@@ -24,9 +24,9 @@ export default function App() {
   return (
     <div className="App app-shell">
       <header className="app-header">
-        <h2>Guacamole Console</h2>
+        <h2>SSH Console</h2>
         <small>
-          Default SSH: <code>/ws/tunnel</code> • Lab node: <code>/ws/cont/&lt;lab-node&gt;</code>
+          Default SSH: <code>/ws/sshterm/default</code> • Lab node: <code>/ws/sshterm/&lt;node&gt;</code>
         </small>
       </header>
 
@@ -37,7 +37,7 @@ export default function App() {
           {/* Page 1: connects to backend SSH node */}
           <Route
             path="/ssh"
-            element={<GuacConsole wsUrl={`${wsRoot}/ws/tunnel`} />}
+            element={<SshConsole wsUrl={`${wsRoot}/ws/sshterm/default`} />}
           />
 
           {/* Dynamic lab overview & nodes */}
@@ -45,10 +45,7 @@ export default function App() {
           <Route path="/labs/:labId/nodes/:nodeId" element={<LabNodeConsole />} />
 
           {/* Backwards compat: static r1 page */}
-          <Route
-            path="/r1"
-            element={<GuacConsole wsUrl={`${wsRoot}/ws/cont/r1`} />}
-          />
+          <Route path="/r1" element={<SshConsole wsUrl={`${wsRoot}/ws/sshterm/r1`} />} />
 
           {/* Default -> /ssh */}
           <Route path="*" element={<Navigate to="/labs" replace />} />

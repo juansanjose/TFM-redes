@@ -10,19 +10,19 @@
           "id": "r1",
           "label": "Router R1",
           "summary": "Edge router 1 (AS 65001)",
-          "wsPath": "/ws/cont/r1"
+          "wsPath": "/ws/sshterm/r1"
         },
         {
           "id": "r2",
           "label": "Router R2",
           "summary": "Transit router (AS 65002)",
-          "wsPath": "/ws/cont/r2"
+          "wsPath": "/ws/sshterm/r2"
         },
         {
           "id": "r3",
           "label": "Router R3",
           "summary": "Edge router 3 (AS 65003)",
-          "wsPath": "/ws/cont/r3"
+          "wsPath": "/ws/sshterm/r3"
         }
       ]
     }
