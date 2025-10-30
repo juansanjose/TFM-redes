@@ -1,0 +1,4 @@
+{
+  "name": "tfm-theme",
+  "keycloakVersionTargets": ["26.0.2"]
+}

@@ -98,6 +98,7 @@ button:disabled {
 
 .console-status.status-connected { color: #38bdf8; }
 .console-status.status-connecting { color: #facc15; }
+.console-status.status-authorizing { color: #facc15; }
 .console-status.status-error { color: #f87171; }
 .console-status.status-disconnected { color: #9ca3af; }
 
@@ -157,6 +158,117 @@ button:disabled {
   color: #e2e8f0;
   font-size: 0.85rem;
   pointer-events: none;
+}
+
+.auth-nav {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.auth-user {
+  font-size: 0.85rem;
+  color: #9ca3af;
+}
+
+.auth-logout {
+  background: transparent;
+  border: 1px solid #3b82f6;
+  padding: 5px 12px;
+  border-radius: 4px;
+  color: #dbeafe;
+  transition: background 0.2s ease;
+}
+
+.auth-logout:hover:not(:disabled) {
+  background: rgba(59, 130, 246, 0.2);
+}
+
+.auth-page {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.auth-card {
+  width: min(400px, 100%);
+  background: #1f2937;
+  border: 1px solid #374151;
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+}
+
+.auth-title {
+  margin: 0;
+  font-size: 1.6rem;
+  color: #f9fafb;
+}
+
+.auth-subtitle {
+  margin: 4px 0 24px;
+  color: #9ca3af;
+  font-size: 0.95rem;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.auth-form label {
+  font-size: 0.85rem;
+  color: #cbd5f5;
+}
+
+.auth-form input {
+  padding: 10px 12px;
+  border-radius: 5px;
+  border: 1px solid #374151;
+  background: #0f172a;
+  color: #e5e7eb;
+}
+
+.auth-form input:focus {
+  outline: 1px solid #3b82f6;
+  border-color: #3b82f6;
+}
+
+.auth-card button {
+  margin-top: 8px;
+  padding: 10px 14px;
+  border-radius: 5px;
+  font-weight: 600;
+}
+
+.auth-error {
+  margin: 0;
+  padding: 8px 10px;
+  border-radius: 4px;
+  background: rgba(248, 113, 113, 0.1);
+  color: #fca5a5;
+  font-size: 0.9rem;
+}
+
+.auth-footer {
+  margin-top: 18px;
+  text-align: center;
+  color: #9ca3af;
+  font-size: 0.9rem;
+}
+
+.auth-footer a {
+  color: #60a5fa;
+}
+
+.auth-loading {
+  padding: 32px;
+  text-align: center;
+  color: #9ca3af;
 }
 
 .console-xterm-host {

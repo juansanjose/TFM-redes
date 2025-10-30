@@ -1,0 +1,9 @@
+keycloak-theme/node_modules
+keycloak-theme/build
+keycloak-theme/build_keycloak
+backend/target
+frontend/node_modules
+frontend/build
+frontend/dist
+.git
+.vscode

@@ -6,6 +6,7 @@ import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
@@ -14,14 +15,13 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import org.apache.sshd.client.SshClient;
-import org.apache.sshd.client.channel.ClientChannel;
 import org.apache.sshd.client.channel.ClientChannelEvent;
 import org.apache.sshd.client.channel.ChannelShell;
 import org.apache.sshd.client.session.ClientSession;
 import org.apache.sshd.client.future.ConnectFuture;
 import org.apache.sshd.client.keyverifier.AcceptAllServerKeyVerifier;
-import org.apache.sshd.client.channel.ClientChannel;
 import org.acme.SshTargetRegistry.Target;
+import org.acme.ws.WsTicketService;
 
 import io.quarkus.logging.Log;
 import jakarta.annotation.PostConstruct;
@@ -58,6 +58,9 @@ public class SshTerminalEndpoint {
     @Inject
     SshTargetRegistry registry;
 
+    @Inject
+    WsTicketService ticketService;
+
     @PostConstruct
     void startClient() {
         sshClient = SshClient.setUpDefaultClient();
@@ -80,6 +83,23 @@ public class SshTerminalEndpoint {
 
     @OnOpen
     public void onOpen(Session ws, @PathParam("node") String nodeId) {
+        String ticketValue = extractSingleParam(ws, "ticket");
+        if (ticketValue == null) {
+            Log.warnf("WS %s rejected: missing ticket", safeId(ws));
+            safeClose(ws, CloseReason.CloseCodes.CANNOT_ACCEPT, "Missing ticket");
+            return;
+        }
+
+        var ticket = ticketService.consume(ticketValue);
+        if (ticket.isEmpty()) {
+            Log.warnf("WS %s rejected: invalid ticket", safeId(ws));
+            safeClose(ws, CloseReason.CloseCodes.VIOLATED_POLICY, "Invalid ticket");
+            return;
+        }
+
+        String principal = ticket.get().principal();
+        ws.getUserProperties().put("principal", principal);
+
         registry.find(nodeId).ifPresentOrElse(target -> openSsh(ws, nodeId, target), () -> {
             Log.warnf("WS %s rejected: unknown node '%s'", safeId(ws), nodeId);
             safeClose(ws, CloseReason.CloseCodes.CANNOT_ACCEPT, "Unknown node");
@@ -89,7 +109,8 @@ public class SshTerminalEndpoint {
     private void openSsh(Session ws, String nodeId, Target target) {
         try {
             ws.setMaxTextMessageBufferSize(65536);
-            Log.infof("WS %s connecting SSH node=%s host=%s:%d", safeId(ws), nodeId, target.host(), target.port());
+            Log.infof("WS %s connecting SSH node=%s host=%s:%d user=%s",
+                    safeId(ws), nodeId, target.host(), target.port(), ws.getUserProperties().get("principal"));
 
             ConnectFuture connectFuture = sshClient.connect(target.user(), target.host(), target.port());
             ClientSession session = connectFuture.verify(SSH_TIMEOUT).getSession();
@@ -162,7 +183,23 @@ public class SshTerminalEndpoint {
     }
 
     private String safeId(Session ws) {
-        return ws != null ? ws.getId() : "n/a";
+        if (ws == null) {
+            return "n/a";
+        }
+        Object principal = ws.getUserProperties().get("principal");
+        if (principal != null) {
+            return ws.getId() + "/" + principal;
+        }
+        return ws.getId();
+    }
+
+    private String extractSingleParam(Session ws, String name) {
+        if (ws == null) return null;
+        Map<String, List<String>> params = ws.getRequestParameterMap();
+        if (params == null) return null;
+        List<String> values = params.get(name);
+        if (values == null || values.isEmpty()) return null;
+        return values.get(0);
     }
 
     private class ClientConnection {

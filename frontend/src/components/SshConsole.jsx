@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Terminal } from "xterm";
 import { FitAddon } from "xterm-addon-fit";
 import "xterm/css/xterm.css";
+import { useAuth } from "../hooks/useAuth";
 
 const MSG_DATA = "0";
 const MSG_RESIZE = "1";
@@ -12,10 +13,45 @@ export default function SshConsole({ wsUrl }) {
   const fitRef = useRef(null);
   const wsRef = useRef(null);
   const resizeTimerRef = useRef(null);
+  const { isAuthenticated, fetchWithAuth } = useAuth();
 
   const [status, setStatus] = useState("disconnected");
+  const [resolvedUrl, setResolvedUrl] = useState(null);
   useEffect(() => {
-    if (!wsUrl) return;
+    let cancelled = false;
+    if (!wsUrl || !isAuthenticated) {
+      setResolvedUrl(null);
+      return () => {
+        cancelled = true;
+      };
+    }
+
+    (async () => {
+      try {
+        setStatus("authorizing");
+        const response = await fetchWithAuth("/api/ws-ticket", { method: "POST" });
+        if (cancelled) return;
+        const ticket = response?.ticket;
+        if (!ticket) throw new Error("No ticket returned");
+        const url = new URL(wsUrl);
+        url.searchParams.set("ticket", ticket);
+        setResolvedUrl(url.toString());
+      } catch (err) {
+        console.error("Failed to obtain WebSocket ticket", err);
+        if (!cancelled) {
+          setResolvedUrl(null);
+          setStatus("error");
+        }
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [wsUrl, isAuthenticated, fetchWithAuth]);
+
+  useEffect(() => {
+    if (!resolvedUrl) return;
     const terminal = new Terminal({
       cursorBlink: true,
       scrollback: 4000,
@@ -37,7 +73,7 @@ export default function SshConsole({ wsUrl }) {
     termRef.current = terminal;
     fitRef.current = fitAddon;
 
-    const socket = new WebSocket(wsUrl);
+    const socket = new WebSocket(resolvedUrl);
     wsRef.current = socket;
     setStatus("connecting");
 
@@ -102,12 +138,12 @@ export default function SshConsole({ wsUrl }) {
       wsRef.current = null;
       setStatus("disconnected");
     };
-  }, [wsUrl]);
+  }, [resolvedUrl]);
 
   return (
     <div className="console-root">
       <div className={`console-status status-${status}`}>
-        Status: {status} &nbsp; <small>{wsUrl}</small>
+        Status: {status} &nbsp; <small>{resolvedUrl ?? "authenticating"}</small>
       </div>
       <div className="console-display">
         <div ref={containerRef} className="console-xterm-host" />

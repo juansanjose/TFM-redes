@@ -1,0 +1,13 @@
+# Node.js artifacts
+**/node_modules/
+**/dist/
+**/build/
+
+# Package manager logs
+npm-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# OS cruft
+.DS_Store
+Thumbs.db
