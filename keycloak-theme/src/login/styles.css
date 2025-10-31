@@ -158,6 +158,117 @@
   padding-top: 1.6rem !important;
 }
 
+/* Register form overrides */
+#kc-register-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+#kc-register-form .container-fluid,
+#kc-register-form .col-xs-12,
+#kc-register-form .col-sm-12,
+#kc-register-form .col-md-12,
+#kc-register-form .col-lg-12 {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+#kc-register-form .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  margin-bottom: 1.35rem;
+}
+
+#kc-register-form .pf-c-form__label,
+#kc-register-form .pf-c-form__label-text,
+#kc-register-form label:not(.pf-c-check__label) {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #f8fafc;
+}
+
+#kc-register-form .pf-c-form-control {
+  border-radius: 10px;
+  padding: 12px;
+  background: rgba(30, 41, 59, 0.85);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  color: #e2e8f0;
+  font-size: 1rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+#kc-register-form .pf-c-form-control:focus {
+  outline: none;
+  border-color: rgba(96, 165, 250, 0.6);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+}
+
+#kc-register-form .form-group.has-error .pf-c-form-control {
+  border-color: #f87171;
+  box-shadow: 0 0 0 1px rgba(248, 113, 113, 0.35);
+}
+
+#kc-register-form .pf-c-form__helper-text {
+  font-size: 0.85rem;
+  color: rgba(226, 232, 240, 0.75);
+}
+
+#kc-register-form .pf-c-form__helper-text.pf-m-error,
+#kc-register-form .kc-feedback-text {
+  color: #fca5a5;
+}
+
+#kc-register-form .pf-c-input-group {
+  display: flex;
+  gap: 0.65rem;
+  align-items: center;
+}
+
+#kc-register-form .pf-c-input-group .pf-c-form-control {
+  flex: 1;
+}
+
+#kc-register-form .pf-c-button.pf-m-inline.pf-m-link {
+  color: rgba(148, 197, 255, 0.9);
+  font-weight: 600;
+  padding: 0;
+}
+
+#kc-register-form .pf-c-button.pf-m-inline.pf-m-link:hover {
+  color: rgba(191, 219, 254, 1);
+  text-decoration: underline;
+}
+
+#kc-register-form .pf-c-check {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: rgba(226, 232, 240, 0.85);
+}
+
+#kc-register-form .pf-c-check__input {
+  width: 18px;
+  height: 18px;
+  border-radius: 6px;
+}
+
+#kc-register-form .pf-c-check__label {
+  color: rgba(226, 232, 240, 0.92);
+  font-weight: 600;
+}
+
+#kc-register-form .kc-feedback-text {
+  margin-top: -0.25rem;
+}
+
+#kc-register-form .g-recaptcha {
+  filter: hue-rotate(180deg) saturate(0.6);
+}
+
+
 @media (max-width: 980px) {
   .tfm-login-shell {
     flex-direction: column;

@@ -7,6 +7,7 @@ import "./styles.css";
 
 const UserProfileFormFields = lazy(() => import("keycloakify/login/UserProfileFormFields"));
 const Login = lazy(() => import("./pages/Login"));
+const Register = lazy(() => import("./pages/Register"));
 const CustomTemplate = lazy(() => import("./Template"));
 const DefaultTemplate = lazy(() => import("keycloakify/login/Template"));
 
@@ -29,6 +30,19 @@ export default function KcPage(props: { kcContext: KcContext }) {
                 classes={classes}
                 Template={CustomTemplate}
                 doUseDefaultCss={false}
+              />
+            );
+          case "register.ftl":
+          case "register-user-profile.ftl":
+            return (
+              <Register
+                kcContext={kcContext}
+                i18n={i18n}
+                classes={classes}
+                Template={CustomTemplate}
+                doUseDefaultCss={false}
+                UserProfileFormFields={UserProfileFormFields}
+                doMakeUserConfirmPassword={doMakeUserConfirmPassword}
               />
             );
           default:
