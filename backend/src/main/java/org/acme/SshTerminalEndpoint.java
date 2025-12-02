@@ -21,6 +21,7 @@ import org.apache.sshd.client.session.ClientSession;
 import org.apache.sshd.client.future.ConnectFuture;
 import org.apache.sshd.client.keyverifier.AcceptAllServerKeyVerifier;
 import org.acme.SshTargetRegistry.Target;
+import org.acme.usage.LabUsageService;
 import org.acme.ws.WsTicketService;
 
 import io.quarkus.logging.Log;
@@ -61,6 +62,9 @@ public class SshTerminalEndpoint {
     @Inject
     WsTicketService ticketService;
 
+    @Inject
+    LabUsageService usageService;
+
     @PostConstruct
     void startClient() {
         sshClient = SshClient.setUpDefaultClient();
@@ -96,17 +100,26 @@ public class SshTerminalEndpoint {
             safeClose(ws, CloseReason.CloseCodes.VIOLATED_POLICY, "Invalid ticket");
             return;
         }
+        WsTicketService.Ticket resolvedTicket = ticket.get();
+        String sessionId = resolvedTicket.sessionId();
+        usageService.startSession(sessionId).ifPresentOrElse(session -> {
+            ws.getUserProperties().put("principal", session.principal());
+            ws.getUserProperties().put("sessionId", session.sessionId());
+            ws.getUserProperties().put("usagePlan", session.plan());
 
-        String principal = ticket.get().principal();
-        ws.getUserProperties().put("principal", principal);
-
-        registry.find(nodeId).ifPresentOrElse(target -> openSsh(ws, nodeId, target), () -> {
-            Log.warnf("WS %s rejected: unknown node '%s'", safeId(ws), nodeId);
-            safeClose(ws, CloseReason.CloseCodes.CANNOT_ACCEPT, "Unknown node");
+            registry.find(nodeId).ifPresentOrElse(target -> openSsh(ws, nodeId, target, sessionId), () -> {
+                Log.warnf("WS %s rejected: unknown node '%s'", safeId(ws), nodeId);
+                usageService.finishSession(sessionId);
+                safeClose(ws, CloseReason.CloseCodes.CANNOT_ACCEPT, "Unknown node");
+            });
+        }, () -> {
+            Log.warnf("WS %s rejected: quota exhausted for ticket session", safeId(ws));
+            usageService.cancelSession(sessionId);
+            safeClose(ws, CloseReason.CloseCodes.VIOLATED_POLICY, "Lab hours exhausted");
         });
     }
 
-    private void openSsh(Session ws, String nodeId, Target target) {
+    private void openSsh(Session ws, String nodeId, Target target, String sessionId) {
         try {
             ws.setMaxTextMessageBufferSize(65536);
             Log.infof("WS %s connecting SSH node=%s host=%s:%d user=%s",
@@ -131,6 +144,7 @@ public class SshTerminalEndpoint {
 
         } catch (Exception e) {
             Log.errorf(e, "WS %s failed to open SSH tunnel for node=%s", safeId(ws), nodeId);
+            usageService.finishSession(sessionId);
             safeClose(ws, CloseReason.CloseCodes.UNEXPECTED_CONDITION, e.getMessage());
         }
     }
@@ -164,6 +178,7 @@ public class SshTerminalEndpoint {
         if (connection != null) {
             connection.close();
         }
+        settleUsage(ws);
         Log.infof("WS %s closed", safeId(ws));
     }
 
@@ -191,6 +206,23 @@ public class SshTerminalEndpoint {
             return ws.getId() + "/" + principal;
         }
         return ws.getId();
+    }
+
+    private void settleUsage(Session ws) {
+        if (ws == null) {
+            return;
+        }
+        Object raw = ws.getUserProperties().get("sessionId");
+        if (raw instanceof String sessionId) {
+            usageService.finishSession(sessionId).ifPresent(snapshot -> {
+                Log.debugf("Usage updated for %s plan=%s consumed=%d remaining=%d",
+                        snapshot.principal(),
+                        snapshot.plan(),
+                        snapshot.consumedSeconds(),
+                        snapshot.remainingSeconds());
+            });
+            ws.getUserProperties().remove("sessionId");
+        }
     }
 
     private String extractSingleParam(Session ws, String name) {

@@ -30,15 +30,23 @@ export function AuthProvider({ children }) {
   const [profile, setProfile] = useState(null);
   const [error, setError] = useState(null);
 
+  const silentCheckSsoRedirectUri = React.useMemo(() => {
+    if (typeof window === "undefined") {
+      return undefined;
+    }
+    return `${window.location.origin}/silent-check-sso.html`;
+  }, []);
+
   useEffect(() => {
     let cancelled = false;
 
     const init = async () => {
       try {
         const authenticated = await keycloak.init({
-          onLoad: "login-required",
+          onLoad: "check-sso",
           checkLoginIframe: false,
           pkceMethod: "S256",
+          silentCheckSsoRedirectUri,
         });
         if (cancelled) return;
         setIsAuthenticated(authenticated);
@@ -80,7 +88,7 @@ export function AuthProvider({ children }) {
     return () => {
       cancelled = true;
     };
-  }, [keycloak]);
+  }, [keycloak, silentCheckSsoRedirectUri]);
 
   const login = useCallback(() => keycloak.login(), [keycloak]);
 

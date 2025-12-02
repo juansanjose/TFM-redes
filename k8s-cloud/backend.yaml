@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  labels:
+    app: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+        - name: backend
+          image: us-central1-docker.pkg.dev/tfm-kubernetes/tfm/backend:1.0 # update to your pushed backend image
+          ports:
+            - containerPort: 8080
+          env:
+            - name: APP_GUACD_HOST
+              value: guacd
+            - name: APP_GUACD_PORT
+              value: "4822"
+            - name: APP_SSH_HOST
+              value: sshd
+            - name: APP_SSH_PORT
+              value: "2222"
+            - name: APP_SSH_USER
+              value: user
+            - name: APP_SSH_PASS
+              value: password
+            - name: KEYCLOAK_URL
+              value: http://keycloak:8080
+            - name: KEYCLOAK_REALM
+              value: tfm
+            - name: KEYCLOAK_CLIENT_ID
+              value: tfm-backend
+            - name: KEYCLOAK_TOKEN_ISSUER
+              value: http://localhost:8082/realms/tfm
+          readinessProbe:
+            httpGet:
+              path: /q/health/ready
+              port: 8080
+            initialDelaySeconds: 20
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /q/health/live
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 20
+      # imagePullSecrets:
+      #   - name: ar-pull
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend
+spec:
+  selector:
+    app: backend
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080

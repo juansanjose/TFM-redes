@@ -4,15 +4,15 @@ WORKDIR /workspace/keycloak-theme
 
 RUN apk add --no-cache openjdk17-jdk maven unzip
 
-COPY keycloak-theme/package.json keycloak-theme/package-lock.json ./
+COPY package.json package-lock.json ./
 
 RUN npm ci
 
-COPY keycloak-theme/. .
+COPY . .
 
 RUN npm run build
 
-RUN mkdir -p build_keycloak/extracted && unzip build_keycloak/keycloakify-tfm-theme-*.jar -d build_keycloak/extracted
+RUN mkdir -p build_keycloak/extracted && unzip -o build_keycloak/keycloakify-tfm-theme-*.jar -d build_keycloak/extracted
 
 FROM quay.io/keycloak/keycloak:26.0.2
 
