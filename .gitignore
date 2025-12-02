@@ -11,3 +11,10 @@ pnpm-debug.log*
 # OS cruft
 .DS_Store
 Thumbs.db
+
+# Terraform
+**/.terraform/
+**/.terraform.lock.hcl
+**/terraform.tfstate
+**/terraform.tfstate.backup
+tfm-terraform/kubectl
