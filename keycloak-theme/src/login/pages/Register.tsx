@@ -8,7 +8,7 @@ import type { UserProfileFormFieldsProps } from "keycloakify/login/UserProfileFo
 import type { KcContext } from "../KcContext";
 import type { I18n } from "../i18n";
 import type { LazyOrNot } from "keycloakify/tools/LazyOrNot";
-import styles from "./Login.module.scss";
+import { AUTH_CLASSNAMES } from "../classNames";
 import {
   Facebook,
   Github,
@@ -21,6 +21,8 @@ import {
   StackOverflow,
   TwitterX
 } from "react-bootstrap-icons";
+
+const authClasses = AUTH_CLASSNAMES;
 
 type RegisterProps = PageProps<Extract<KcContext, { pageId: "register.ftl" | "register-user-profile.ftl" }>, I18n> & {
   UserProfileFormFields: LazyOrNot<(props: UserProfileFormFieldsProps) => JSX.Element>;
@@ -57,9 +59,6 @@ export default function Register(props: RegisterProps) {
   }, []);
 
   const alreadyHaveAccountText = advancedMsgStr("alreadyHaveAccount");
-
-  const resolvedAlreadyHaveAccount =
-    alreadyHaveAccountText !== "alreadyHaveAccount" ? alreadyHaveAccountText : "Already have an account?";
   const recaptchaRequired =
     "recaptchaRequired" in kcContext ? kcContext.recaptchaRequired === true : false;
   const recaptchaVisible =
@@ -84,11 +83,6 @@ export default function Register(props: RegisterProps) {
   const providersLoadFailed = social !== undefined && social.providers === undefined;
   const loadFailedMessage = advancedMsgStr("identity-provider-login-load-failed");
   const emptyProvidersMessage = advancedMsgStr("identity-provider-login-empty");
-  const socialProvidersTitle = advancedMsgStr("identity-provider-register-title");
-  const resolvedSocialProvidersTitle =
-    socialProvidersTitle !== "identity-provider-register-title"
-      ? socialProvidersTitle
-      : "Or sign up with";
   const resolvedLoadFailedMessage =
     loadFailedMessage !== "identity-provider-login-load-failed"
       ? loadFailedMessage
@@ -110,29 +104,27 @@ export default function Register(props: RegisterProps) {
       displayInfo={false}
       socialProvidersNode={
         social !== undefined && (
-          <div id="kc-social-providers" className={styles.socialProviders}>
-            <hr />
-            <h2>{resolvedSocialProvidersTitle}</h2>
+          <div id="kc-social-providers" className={authClasses.socialProviders}>
             {providersLoadFailed && (
-              <div className={clsx(styles.socialProvidersStatus, styles.socialProvidersError)} role="alert">
+              <div className={clsx(authClasses.socialProvidersStatus, authClasses.socialProvidersError)} role="alert">
                 {resolvedLoadFailedMessage}
               </div>
             )}
             {!providersLoadFailed && !hasSocialProviders && (
-              <div className={styles.socialProvidersStatus} role="status">
+              <div className={authClasses.socialProvidersStatus} role="status">
                 {resolvedEmptyProvidersMessage}
               </div>
             )}
             {hasSocialProviders && (
               <ul
-                className={clsx(styles.socialAccountList, {
-                  [styles.grid]: socialProviders.length > 3
+                className={clsx(authClasses.socialAccountList, {
+                  [authClasses.grid]: socialProviders.length > 3
                 })}
               >
                 {socialProviders.map((provider) => (
                   <li key={provider.alias}>
                     <a id={`social-${provider.alias}`} type="button" href={provider.loginUrl}>
-                      <span className={styles.socialIcon}>
+                      <span className={authClasses.socialIcon}>
                         {SocialAliasToIconMapper[provider.alias as keyof typeof SocialAliasToIconMapper] ?? (
                           <DefaultSocialIcon />
                         )}
@@ -171,15 +163,15 @@ export default function Register(props: RegisterProps) {
         )}
 
         {recaptchaRequired && (recaptchaVisible || recaptchaAction === undefined) && (
-          <div className={styles.recaptcha}>
+          <div className={authClasses.recaptcha}>
             <div className="g-recaptcha" data-size="compact" data-sitekey={recaptchaSiteKey} data-action={recaptchaAction} />
           </div>
         )}
 
-        <div className={styles.actions}>
+        <div className={authClasses.actions}>
           {recaptchaRequired && !recaptchaVisible && recaptchaAction !== undefined ? (
             <button
-              className={clsx(styles.submitButton, "g-recaptcha")}
+              className={clsx(authClasses.submitButton, "g-recaptcha")}
               data-sitekey={recaptchaSiteKey}
               data-callback="onSubmitRecaptcha"
               data-action={recaptchaAction}
@@ -190,16 +182,19 @@ export default function Register(props: RegisterProps) {
             </button>
           ) : (
             <button
-              className={styles.submitButton}
+              className={authClasses.submitButton}
               type="submit"
               disabled={!isFormSubmittable || (termsAcceptanceRequired && !areTermsAccepted)}
             >
               {msgStr("doRegister")}
             </button>
           )}
-          <div className={styles.backLink}>
-            <span>{resolvedAlreadyHaveAccount} </span>
-            <a href={url.loginUrl}>{msg("backToLogin")}</a>
+          <div className={authClasses.backLink}>
+            <a href={url.loginUrl}>
+              {alreadyHaveAccountText !== "alreadyHaveAccount"
+                ? alreadyHaveAccountText
+                : msg("backToLogin")}
+            </a>
           </div>
         </div>
       </form>
@@ -220,7 +215,7 @@ function TermsAcceptance(props: {
   const { msg } = i18n;
 
   return (
-    <div className={styles.terms}>
+    <div className={authClasses.terms}>
       <div>{msg("termsTitle")}</div>
       <div id="kc-registration-terms-text">{msg("termsText")}</div>
       <label htmlFor="termsAccepted">
@@ -237,7 +232,7 @@ function TermsAcceptance(props: {
       </label>
       {messagesPerField.existsError("termsAccepted") && (
         <span
-          className={styles.termsError}
+          className={authClasses.termsError}
           id="input-error-terms-accepted"
           aria-live="polite"
           dangerouslySetInnerHTML={{

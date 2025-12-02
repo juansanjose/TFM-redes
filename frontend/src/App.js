@@ -5,52 +5,92 @@ import SshConsole from "./components/SshConsole";
 import LabList from "./components/LabList";
 import LabNodeConsole from "./components/LabNodeConsole";
 import { useAuth } from "./hooks/useAuth";
+import { useUsage } from "./hooks/useUsage";
+import HomePage from "./pages/HomePage";
+import PlanTogglePage from "./pages/PlanTogglePage";
 import "./App.css";
 
 // Build a ws/wss root that matches how the app is served
 const wsRoot = `${window.location.protocol === "https:" ? "wss:" : "ws:"}//${window.location.host}`;
 
 function Nav() {
-  const { isAuthenticated, profile, logout, isInitializing } = useAuth();
+  const { isAuthenticated, profile, logout, login, isInitializing } = useAuth();
+  const { usage } = useUsage({ refreshInterval: 60000 });
   const linkStyle = ({ isActive }) =>
-    `px-3 py-2 rounded ${isActive ? "bg-black/10" : "hover:bg-black/5"}`;
+    `top-nav-link ${isActive ? "top-nav-link--active" : ""}`;
   const displayName = profile?.preferred_username ?? profile?.email ?? profile?.name ?? "user";
+  const planLabel = usage?.plan === "PREMIUM" ? "Premium" : "Free";
+
+  const formatRemaining = (seconds) => {
+    if (typeof seconds !== "number" || Number.isNaN(seconds)) return null;
+    if (seconds <= 0) return "0m left";
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    if (hours > 0 && minutes > 0) return `${hours}h ${minutes}m left`;
+    if (hours > 0) return `${hours}h left`;
+    return `${minutes}m left`;
+  };
+
+  const remainingLabel = formatRemaining(usage?.remainingSeconds);
+
+  const navLinks = [
+    { to: "/", label: "Overview", needsAuth: false },
+    { to: "/labs", label: "Lab Catalog", needsAuth: true },
+    { to: "/ssh", label: "Live Console", needsAuth: true },
+    { to: "/plan", label: "Plan Toggle", needsAuth: true },
+  ];
+  const visibleLinks = navLinks.filter((link) => (link.needsAuth ? isAuthenticated : true));
 
   return (
-    <nav className="app-nav">
-      {isAuthenticated ? (
-        <>
-          <NavLink to="/ssh" className={linkStyle}>SSH Node</NavLink>
-          <NavLink to="/labs" className={linkStyle}>Lab Nodes</NavLink>
-          <div className="auth-nav">
-            <span className="auth-user">Signed in as {displayName}</span>
+    <header className="top-nav">
+      <div className="top-nav-brand">
+        <span className="top-nav-name">Bluewire</span>
+        <span className="top-nav-tagline">Network Learning Studio</span>
+      </div>
+      <nav className="top-nav-links" aria-label="Primary navigation">
+        {visibleLinks.map(({ to, label }) => (
+          <NavLink key={to} to={to} className={linkStyle} end={to === "/"}>
+            {label}
+          </NavLink>
+        ))}
+      </nav>
+      <div className="top-nav-actions">
+        {isAuthenticated ? (
+          <>
+            {usage ? (
+              <span className={`top-nav-usage plan-${planLabel?.toLowerCase() ?? "free"}`}>
+                {planLabel} · {remainingLabel ?? "loading…"}
+              </span>
+            ) : null}
+            <span className="top-nav-user" aria-live="polite">
+              {displayName}
+            </span>
             <button
               type="button"
-              className="auth-logout"
+              className="top-nav-logout"
               onClick={logout}
               disabled={isInitializing}
             >
               Logout
             </button>
-          </div>
-        </>
-      ) : (
-        <>
-          <span className="auth-user">Redirecting to login…</span>
-        </>
-      )}
-    </nav>
+          </>
+        ) : (
+          <button
+            type="button"
+            className="top-nav-login"
+            onClick={login}
+            disabled={isInitializing}
+          >
+            Sign In
+          </button>
+        )}
+      </div>
+    </header>
   );
 }
 
 function ProtectedRoute({ children }) {
   const { isInitializing, isAuthenticated, login, error } = useAuth();
-
-  React.useEffect(() => {
-    if (!isInitializing && !isAuthenticated) {
-      login();
-    }
-  }, [isInitializing, isAuthenticated, login]);
 
   if (isInitializing) {
     return <div className="auth-loading">Connecting to Keycloak…</div>;
@@ -65,7 +105,17 @@ function ProtectedRoute({ children }) {
   }
 
   if (!isAuthenticated) {
-    return <div className="auth-loading">Redirecting to Keycloak…</div>;
+    return (
+      <section className="auth-gate">
+        <div className="auth-gate-card">
+          <h3>Sign in required</h3>
+          <p>Access to labs and consoles needs an authenticated session. Continue to Keycloak to sign in.</p>
+          <button type="button" onClick={login} className="auth-gate-login">
+            Login
+          </button>
+        </div>
+      </section>
+    );
   }
 
   return children;
@@ -73,18 +123,13 @@ function ProtectedRoute({ children }) {
 
 export default function App() {
   return (
-    <div className="App app-shell">
-      <header className="app-header">
-        <h2>SSH Console</h2>
-        <small>
-          Default SSH: <code>/ws/sshterm/default</code> • Lab node: <code>/ws/sshterm/&lt;node&gt;</code>
-        </small>
-      </header>
-
+    <div className="App">
       <Nav />
 
       <main className="app-main">
         <Routes>
+          <Route path="/" element={<HomePage />} />
+
           {/* Page 1: connects to backend SSH node */}
           <Route
             path="/ssh"
@@ -112,6 +157,14 @@ export default function App() {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/plan"
+            element={
+              <ProtectedRoute>
+                <PlanTogglePage />
+              </ProtectedRoute>
+            }
+          />
 
           {/* Backwards compat: static r1 page */}
           <Route
@@ -124,7 +177,7 @@ export default function App() {
           />
 
           {/* Default -> /ssh */}
-          <Route path="*" element={<Navigate to="/labs" replace />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>
     </div>

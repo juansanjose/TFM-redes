@@ -27,15 +27,29 @@ public class IdentityResource {
     @GET
     public Map<String, Object> me() {
         Map<String, Object> payload = new HashMap<>();
-        payload.put("principal", identity.getPrincipal().getName());
+        String principal = resolvePrincipal();
+        payload.put("principal", principal);
         payload.put("roles", Set.copyOf(identity.getRoles()));
-        identity.getAttributes().keySet().forEach(name -> {
-            Object value = identity.getAttribute(name);
-            if (value != null) {
-                payload.put(name, value);
-            }
-        });
-        LOG.debugf("Identity request for %s", identity.getPrincipal().getName());
+        Object expiry = identity.getAttribute("quarkus.identity.expire-time");
+        if (expiry != null) {
+            payload.put("expireTime", expiry);
+        }
+        LOG.debugf("Identity request for %s", principal);
         return payload;
+    }
+
+    private String resolvePrincipal() {
+        Object preferred = identity.getAttribute("preferred_username");
+        if (preferred instanceof String && !((String) preferred).isBlank()) {
+            return (String) preferred;
+        }
+        if (identity.getPrincipal() != null && identity.getPrincipal().getName() != null) {
+            return identity.getPrincipal().getName();
+        }
+        Object sub = identity.getAttribute("sub");
+        if (sub instanceof String && !((String) sub).isBlank()) {
+            return (String) sub;
+        }
+        return "unknown";
     }
 }

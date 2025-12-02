@@ -1,0 +1,10 @@
+apiVersion: builtin
+kind: HelmChartInflationGenerator
+chartHome: ../../../../charts
+name: argo-cd
+metadata:
+  name: argo-cd-9.1.5
+namespace: argocd
+releaseName: argocd
+includeCRDs: true
+valuesFile: values.yaml

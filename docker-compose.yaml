@@ -109,6 +109,8 @@ services:
       KEYCLOAK_URL: http://keycloak:8080
       KEYCLOAK_REALM: tfm
       KEYCLOAK_CLIENT_ID: tfm-backend
+      # Accept tokens issued from the host-exposed Keycloak URL used by the SPA.
+      KEYCLOAK_TOKEN_ISSUER: http://localhost:8082/realms/tfm
     depends_on:
       guacd:
         condition: service_started

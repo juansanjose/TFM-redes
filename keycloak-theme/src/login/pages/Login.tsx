@@ -20,7 +20,9 @@ import {
   StackOverflow,
   TwitterX
 } from "react-bootstrap-icons";
-import styles from "./Login.module.scss";
+import { AUTH_CLASSNAMES } from "../classNames";
+
+const authClasses = AUTH_CLASSNAMES;
 
 type LoginProps = PageProps<Extract<KcContext, { pageId: "login.ftl" }>, I18n>;
 
@@ -64,41 +66,30 @@ export default function Login(props: LoginProps) {
       classes={classes}
       displayMessage={!usernamePasswordHasError}
       headerNode={msg("loginAccountTitle")}
-      displayInfo={realm.password && realm.registrationAllowed && !registrationDisabled}
-      infoNode={
-        <div className={styles.info} id="kc-registration-container">
-          <div id="kc-registration">
-            <span>
-              {msg("noAccount")} <a href={url.registrationUrl}>{msg("doRegister")}</a>
-            </span>
-          </div>
-        </div>
-      }
+      displayInfo={false}
       socialProvidersNode={
         social !== undefined && (
-          <div id="kc-social-providers" className={styles.socialProviders}>
-            <hr />
-            <h2>{msg("identity-provider-login-label")}</h2>
+          <div id="kc-social-providers" className={authClasses.socialProviders}>
             {providersLoadFailed && (
-              <div className={clsx(styles.socialProvidersStatus, styles.socialProvidersError)} role="alert">
+              <div className={clsx(authClasses.socialProvidersStatus, authClasses.socialProvidersError)} role="alert">
                 {resolvedLoadFailedMessage}
               </div>
             )}
             {!providersLoadFailed && !hasSocialProviders && (
-              <div className={styles.socialProvidersStatus} role="status">
+              <div className={authClasses.socialProvidersStatus} role="status">
                 {resolvedEmptyProvidersMessage}
               </div>
             )}
             {hasSocialProviders && (
               <ul
-                className={clsx(styles.socialAccountList, {
-                  [styles.grid]: socialProviders.length > 3
+                className={clsx(authClasses.socialAccountList, {
+                  [authClasses.grid]: socialProviders.length > 3
                 })}
               >
                 {socialProviders.map((provider) => (
                   <li key={provider.alias}>
                     <a id={`social-${provider.alias}`} type="button" href={provider.loginUrl}>
-                      <span className={styles.socialIcon}>
+                      <span className={authClasses.socialIcon}>
                         {SocialAliasToIconMapper[provider.alias as keyof typeof SocialAliasToIconMapper]}
                       </span>
                       <span
@@ -128,8 +119,8 @@ export default function Login(props: LoginProps) {
               method="post"
             >
               {!usernameHidden && (
-                <div className={styles.formGroup}>
-                  <label className={styles.label} htmlFor="username">
+                <div className={authClasses.formGroup}>
+                  <label className={authClasses.label} htmlFor="username">
                     {!realm.loginWithEmailAllowed
                       ? msg("username")
                       : !realm.registrationEmailAsUsername
@@ -144,10 +135,10 @@ export default function Login(props: LoginProps) {
                     autoFocus
                     autoComplete="username"
                     aria-invalid={usernamePasswordHasError}
-                    className={clsx(styles.input, usernamePasswordHasError && styles.inputInvalid)}
+                    className={clsx(authClasses.input, usernamePasswordHasError && authClasses.inputInvalid)}
                   />
                   {usernamePasswordHasError && (
-                    <div className={styles.feedback} role="alert">
+                    <div className={authClasses.feedback} role="alert">
                       <span
                         id="input-error"
                         aria-live="polite"
@@ -160,8 +151,8 @@ export default function Login(props: LoginProps) {
                 </div>
               )}
 
-              <div className={styles.formGroup}>
-                <label className={styles.label} htmlFor="password">
+              <div className={authClasses.formGroup}>
+                <label className={authClasses.label} htmlFor="password">
                   {msg("password")}
                 </label>
                 <PasswordWrapper i18n={i18n} passwordInputId="password">
@@ -171,11 +162,11 @@ export default function Login(props: LoginProps) {
                     type="password"
                     autoComplete="current-password"
                     aria-invalid={usernamePasswordHasError}
-                    className={clsx(styles.input, usernamePasswordHasError && styles.inputInvalid)}
+                    className={clsx(authClasses.input, usernamePasswordHasError && authClasses.inputInvalid)}
                   />
                 </PasswordWrapper>
                 {usernameHidden && usernamePasswordHasError && (
-                  <div className={styles.feedback} role="alert">
+                  <div className={authClasses.feedback} role="alert">
                     <span
                       id="input-error"
                       aria-live="polite"
@@ -187,10 +178,10 @@ export default function Login(props: LoginProps) {
                 )}
               </div>
 
-              <div className={styles.settings}>
-                <div id="kc-form-options">
+              {(realm.rememberMe && !usernameHidden) || realm.resetPasswordAllowed ? (
+                <div className={authClasses.settings}>
                   {realm.rememberMe && !usernameHidden && (
-                    <label className={styles.checkboxLabel} htmlFor="rememberMe">
+                    <label className={authClasses.checkboxLabel} htmlFor="rememberMe">
                       <input
                         id="rememberMe"
                         name="rememberMe"
@@ -200,13 +191,13 @@ export default function Login(props: LoginProps) {
                       {msg("rememberMe")}
                     </label>
                   )}
-                </div>
-                <div className={styles.forgotPassword}>
                   {realm.resetPasswordAllowed && (
-                    <a href={url.loginResetCredentialsUrl}>{msg("doForgotPassword")}</a>
+                    <div className={authClasses.forgotPassword}>
+                      <a href={url.loginResetCredentialsUrl}>{msg("doForgotPassword")}</a>
+                    </div>
                   )}
                 </div>
-              </div>
+              ) : null}
 
               <div id="kc-form-buttons">
                 <input
@@ -216,7 +207,7 @@ export default function Login(props: LoginProps) {
                   value={auth?.selectedCredential ?? ""}
                 />
                 <button
-                  className={styles.submitButton}
+                  className={authClasses.submitButton}
                   disabled={isLoginButtonDisabled}
                   name="login"
                   id="kc-login"
@@ -229,6 +220,13 @@ export default function Login(props: LoginProps) {
           )}
         </div>
       </div>
+      {realm.registrationAllowed && !registrationDisabled && url.registrationUrl && (
+        <div className={authClasses.backLink}>
+          <a id="kc-registration-link" href={url.registrationUrl}>
+            {msg("doRegister")}
+          </a>
+        </div>
+      )}
     </Template>
   );
 }
@@ -242,11 +240,11 @@ function PasswordWrapper(props: { i18n: I18n; passwordInputId: string; children:
   });
 
   return (
-    <div className={styles.inputGroup}>
+    <div className={authClasses.inputGroup}>
       {children}
       <button
         type="button"
-        className={styles.passwordToggle}
+        className={authClasses.passwordToggle}
         aria-label={msgStr(isPasswordRevealed ? "hidePassword" : "showPassword")}
         aria-controls={passwordInputId}
         onClick={toggleIsPasswordRevealed}

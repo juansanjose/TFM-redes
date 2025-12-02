@@ -41,7 +41,7 @@ export default function Template(props: TemplateProps<KcContext, I18n>) {
 
   useSetClassName({
     qualifiedName: "body",
-    className: clsx("tfm-login-body", bodyClassName ?? kcClsx("kcBodyClass"))
+    className: clsx("tfm-minimal-body", bodyClassName ?? kcClsx("kcBodyClass"))
   });
 
   const { isReadyToRender } = useInitialize({ kcContext, doUseDefaultCss });
@@ -85,82 +85,58 @@ export default function Template(props: TemplateProps<KcContext, I18n>) {
   };
 
   return (
-    <div className="tfm-login-shell">
-      <aside className="tfm-login-hero">
-        <div className="tfm-login-brand">
-          <span className="tfm-login-badge">{realm.displayName ?? "Welcome"}</span>
-          <h2>{msg("loginAccountTitle")}</h2>
-          <p>
-            {msgStr("loginTitle", realm.displayName)}.{" "}
-            {msg("webauthn-login-title") ?? "Secure access for your workspace."}
-          </p>
-        </div>
-      </aside>
-      <main className="tfm-login-form">
-        <div className={clsx("tfm-login-card", kcClsx("kcFormCardClass"))}>
-          <header className={clsx("tfm-login-header", kcClsx("kcFormHeaderClass"))}>{renderHeader()}</header>
-          <div id="kc-content" className={kcClsx("kcContentClass")}>
-            <div id="kc-content-wrapper" className={kcClsx("kcContentWrapperClass")}>
-              {displayMessage &&
-                message !== undefined &&
-                (message.type !== "warning" || !isAppInitiatedAction) && (
-                  <div
-                    className={clsx(
-                      `alert-${message.type}`,
-                      kcClsx("kcAlertClass"),
-                      `pf-m-${message?.type === "error" ? "danger" : message.type}`
-                    )}
-                  >
-                    <div className="pf-c-alert__icon">
-                      {message.type === "success" && <span className={kcClsx("kcFeedbackSuccessIcon")} />}
-                      {message.type === "warning" && <span className={kcClsx("kcFeedbackWarningIcon")} />}
-                      {message.type === "error" && <span className={kcClsx("kcFeedbackErrorIcon")} />}
-                      {message.type === "info" && <span className={kcClsx("kcFeedbackInfoIcon")} />}
-                    </div>
-                    <span
-                      className={kcClsx("kcAlertTitleClass")}
-                      dangerouslySetInnerHTML={{
-                        __html: kcSanitize(message.summary)
-                      }}
-                    />
-                  </div>
-                )}
-
-              {children}
-
-              {auth !== undefined && auth.showTryAnotherWayLink && (
-                <form id="kc-select-try-another-way-form" action={url.loginAction} method="post">
-                  <div className={kcClsx("kcFormGroupClass")}>
-                    <input type="hidden" name="tryAnotherWay" value="on" />
-                    <a
-                      href="#"
-                      id="try-another-way"
-                      onClick={() => {
-                        document.forms["kc-select-try-another-way-form" as never].requestSubmit();
-                        return false;
-                      }}
-                    >
-                      {msg("doTryAnotherWay")}
-                    </a>
-                  </div>
-                </form>
-              )}
-
-              {socialProvidersNode && <div className="tfm-login-social-list">{socialProvidersNode}</div>}
-
-              {displayInfo && (
-                <div id="kc-info" className={kcClsx("kcSignUpClass")}>
-                  <div id="kc-info-wrapper" className={kcClsx("kcInfoAreaWrapperClass")}>
-                    {infoNode}
-                  </div>
+    <div className="tfm-minimal-shell">
+      <main className="tfm-minimal-card">
+        <header className={clsx("tfm-minimal-header", kcClsx("kcFormHeaderClass"))}>{renderHeader()}</header>
+        <div id="kc-content" className={kcClsx("kcContentClass")}>
+          <div id="kc-content-wrapper" className={kcClsx("kcContentWrapperClass")}>
+            {displayMessage &&
+              message !== undefined &&
+              (message.type !== "warning" || !isAppInitiatedAction) && (
+                <div
+                  className={clsx(
+                    "tfm-minimal-alert",
+                    `alert-${message.type}`,
+                    kcClsx("kcAlertClass"),
+                    `pf-m-${message?.type === "error" ? "danger" : message.type}`
+                  )}
+                >
+                  <span
+                    className={kcClsx("kcAlertTitleClass")}
+                    dangerouslySetInnerHTML={{
+                      __html: kcSanitize(message.summary)
+                    }}
+                  />
                 </div>
               )}
-            </div>
+
+            {children}
+
+            {auth !== undefined && auth.showTryAnotherWayLink && (
+              <form id="kc-select-try-another-way-form" action={url.loginAction} method="post">
+                <div className={kcClsx("kcFormGroupClass")}>
+                  <input type="hidden" name="tryAnotherWay" value="on" />
+                  <button
+                    type="button"
+                    className="tfm-minimal-link"
+                    onClick={() => {
+                      document.forms["kc-select-try-another-way-form" as never].requestSubmit();
+                    }}
+                  >
+                    {msg("doTryAnotherWay")}
+                  </button>
+                </div>
+              </form>
+            )}
+
+            {socialProvidersNode && <div className="tfm-minimal-social">{socialProvidersNode}</div>}
+
+            {displayInfo && infoNode}
           </div>
         </div>
       </main>
       {enabledLanguages.length > 1 && (
-        <div className="tfm-login-locale">
+        <div className="tfm-minimal-locale">
           <div className={kcClsx("kcLocaleWrapperClass")}>
             <button
               id="kc-current-locale-link"

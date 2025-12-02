@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tfm-frontend
+  labels:
+    app: tfm-frontend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: tfm-frontend
+  template:
+    metadata:
+      labels:
+        app: tfm-frontend
+    spec:
+      containers:
+        - name: tfm-frontend
+          image: us-central1-docker.pkg.dev/tfm-kubernetes/tfm/tfm-frontend:1.0
+          ports:
+            - containerPort: 80
+          # env:
+          #   - name: API_BASE_URL
+          #     value: https://api.example.com
+      # imagePullSecrets:
+      #   - name: ar-pull
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tfm-frontend
+spec:
+  type: ClusterIP
+  selector:
+    app: tfm-frontend
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
