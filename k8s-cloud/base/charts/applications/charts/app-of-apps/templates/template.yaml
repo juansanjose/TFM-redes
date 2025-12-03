@@ -1,0 +1,74 @@
+{{- range $app_name, $app_value := $.Values.apps }}
+{{- if $app_value.enabled }}
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+{{- if $.Values.appPrefix }}
+  name: {{ printf "%s-%s" $.Values.appPrefix $app_name | replace "_" "-" | quote }}
+{{- else }}
+  name: {{ $app_name | replace "_" "-" | quote }}
+{{- end }}
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: {{ $app_value.wave }}
+{{- if $app_value.argocompareannotation }}
+{{- range $index, $compare_option := $app_value.argocompareannotation }}
+    #Kyverno serversidediff compare due to policy sync issue
+    # https://github.com/kyverno/kyverno/issues/9451
+    argocd.argoproj.io/compare-options: {{ $compare_option }}
+{{- end }}
+{{- end }}
+spec:
+  destination:
+    # reference to the target cluster and namespace.
+    # For the cluster one of server or name can be used, but not both (which will result in an error).
+    # Under the hood when the server is missing, it is calculated based on the name and used for any operations.
+{{- if eq $.Values.destination.name "in-cluster" }}
+    server: "https://kubernetes.default.svc"
+{{- else }}
+    name: {{ $.Values.destination.name | quote }}
+{{- end }}
+{{- if $app_value.namespace }}
+    namespace: {{ $app_value.namespace }}
+{{- end }}
+  project: default
+  syncPolicy:
+{{- if $app_value.autosync }}
+    automated:
+      selfHeal: true
+{{- if $app_value.prune }}
+      prune: true
+{{- end }}
+{{- end }}
+{{- if hasKey $app_value "retry" }}
+{{- if $app_value.retry }}
+    retry:
+{{ $app_value.retry | toYaml | indent 5 }}
+{{- end }}
+{{- else }}
+    retry:
+      limit: 2
+      backoff:
+        duration: 5s
+        maxDuration: 3m0s
+        factor: 2
+{{- end }}
+{{- if $app_value.syncOptions }}
+    syncOptions:
+{{- range $index, $sync_option := $app_value.syncOptions }}
+- {{ $sync_option }}
+{{- end }}
+{{- end }}
+{{- if $app_value.ignoreDifferences }}
+  ignoreDifferences:
+{{ $app_value.ignoreDifferences | toYaml | indent 4 }}
+{{- end }}
+  source:
+    repoURL: {{ $app_value.repoUrl | default $.Values.source.repoUrl | quote }}
+    path: {{ printf "%s/%s" (ternary $app_value.envPath $.Values.source.envPath (hasKey $app_value "envPath") ) $app_name | replace "_" "-" | quote }}
+    directory:
+      include: '{resources.yaml,crds.yaml}'
+    targetRevision: {{ $app_value.targetRevision | default $.Values.source.targetRevision | quote }}
+{{- end }}
+{{- end }}

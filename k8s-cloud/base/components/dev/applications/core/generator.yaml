@@ -1,0 +1,9 @@
+apiVersion: builtin
+kind: HelmChartInflationGenerator
+chartHome: ../../../../charts/applications/charts
+metadata:
+  name: app-of-apps
+name: app-of-apps
+namespace: argocd
+includeCRDs: true
+valuesFile: values.yaml
