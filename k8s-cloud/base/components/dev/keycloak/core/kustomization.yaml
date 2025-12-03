@@ -1,0 +1,12 @@
+apiVersion: kustomize.config.k8s.io/v1alpha1
+kind: Component
+
+generators:
+  - generator.yaml
+
+configMapGenerator:
+  - name: keycloak-theme-archive
+    options:
+      disableNameSuffixHash: true
+    files:
+      - tfm-theme.tar.gz

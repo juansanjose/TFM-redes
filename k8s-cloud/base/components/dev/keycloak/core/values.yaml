@@ -1,0 +1,234 @@
+# Preserve themes/providers since the custom image already contains them
+preserveThemes: true
+
+keycloak:
+  adminUser: admin
+  existingSecret: keycloak
+  # Import the realm export on startup
+  extraArgs:
+    - "--import-realm"
+
+# Mount the realm export JSON like the compose volume
+extraVolumes:
+  - name: realm-export
+    configMap:
+      name: keycloak-realm
+  - name: keycloak-theme-archive
+    configMap:
+      name: keycloak-theme-archive
+  - name: keycloak-theme-workdir
+    emptyDir: {}
+
+extraVolumeMounts:
+  - name: realm-export
+    mountPath: /opt/keycloak/data/import/realm-export.json
+    subPath: realm-export.json
+  - name: keycloak-theme-workdir
+    mountPath: /opt/keycloak/themes
+
+# Create the ConfigMap with the realm export contents
+extraObjects:
+  - apiVersion: v1
+    kind: ConfigMap
+    metadata:
+      name: keycloak-realm
+    data:
+      realm-export.json: |
+        {
+          "realm": "tfm",
+          "enabled": true,
+          "displayName": "TFM Realm",
+          "loginTheme": "tfm-theme",
+          "registrationAllowed": true,
+          "rememberMe": true,
+          "resetPasswordAllowed": true,
+          "registrationEmailAsUsername": true,
+          "loginWithEmailAllowed": true,
+          "clients": [
+            {
+              "clientId": "tfm-backend",
+              "name": "TFM Backend",
+              "protocol": "openid-connect",
+              "publicClient": false,
+              "bearerOnly": true,
+              "directAccessGrantsEnabled": false,
+              "standardFlowEnabled": false,
+              "serviceAccountsEnabled": false,
+              "authorizationServicesEnabled": false,
+              "fullScopeAllowed": true,
+              "redirectUris": [],
+              "webOrigins": [],
+              "protocolMappers": [
+                {
+                  "name": "email",
+                  "protocol": "openid-connect",
+                  "protocolMapper": "oidc-usermodel-property-mapper",
+                  "consentRequired": false,
+                  "config": {
+                    "user.attribute": "email",
+                    "claim.name": "email",
+                    "jsonType.label": "String",
+                    "id.token.claim": "true",
+                    "access.token.claim": "true"
+                  }
+                },
+                {
+                  "name": "given name",
+                  "protocol": "openid-connect",
+                  "protocolMapper": "oidc-usermodel-property-mapper",
+                  "consentRequired": false,
+                  "config": {
+                    "user.attribute": "firstName",
+                    "claim.name": "given_name",
+                    "jsonType.label": "String",
+                    "id.token.claim": "true",
+                    "access.token.claim": "true"
+                  }
+                },
+                {
+                  "name": "family name",
+                  "protocol": "openid-connect",
+                  "protocolMapper": "oidc-usermodel-property-mapper",
+                  "consentRequired": false,
+                  "config": {
+                    "user.attribute": "lastName",
+                    "claim.name": "family_name",
+                    "jsonType.label": "String",
+                    "id.token.claim": "true",
+                    "access.token.claim": "true"
+                  }
+                },
+                {
+                  "name": "username",
+                  "protocol": "openid-connect",
+                  "protocolMapper": "oidc-usermodel-property-mapper",
+                  "consentRequired": false,
+                  "config": {
+                    "user.attribute": "username",
+                    "claim.name": "preferred_username",
+                    "jsonType.label": "String",
+                    "id.token.claim": "true",
+                    "access.token.claim": "true"
+                  }
+                }
+              ]
+            },
+            {
+              "clientId": "tfm-frontend",
+              "name": "TFM Frontend",
+              "protocol": "openid-connect",
+              "publicClient": true,
+              "bearerOnly": false,
+              "directAccessGrantsEnabled": true,
+              "standardFlowEnabled": true,
+              "implicitFlowEnabled": false,
+              "serviceAccountsEnabled": false,
+              "authorizationServicesEnabled": false,
+              "fullScopeAllowed": true,
+              "redirectUris": [
+                "http://localhost:8088/*",
+                "http://frontend:80/*"
+              ],
+              "webOrigins": [
+                "http://localhost:8088",
+                "http://frontend:80"
+              ],
+              "protocolMappers": [
+                {
+                  "name": "email",
+                  "protocol": "openid-connect",
+                  "protocolMapper": "oidc-usermodel-property-mapper",
+                  "consentRequired": false,
+                  "config": {
+                    "user.attribute": "email",
+                    "claim.name": "email",
+                    "jsonType.label": "String",
+                    "id.token.claim": "true",
+                    "access.token.claim": "true"
+                  }
+                },
+                {
+                  "name": "given name",
+                  "protocol": "openid-connect",
+                  "protocolMapper": "oidc-usermodel-property-mapper",
+                  "consentRequired": false,
+                  "config": {
+                    "user.attribute": "firstName",
+                    "claim.name": "given_name",
+                    "jsonType.label": "String",
+                    "id.token.claim": "true",
+                    "access.token.claim": "true"
+                  }
+                },
+                {
+                  "name": "family name",
+                  "protocol": "openid-connect",
+                  "protocolMapper": "oidc-usermodel-property-mapper",
+                  "consentRequired": false,
+                  "config": {
+                    "user.attribute": "lastName",
+                    "claim.name": "family_name",
+                    "jsonType.label": "String",
+                    "id.token.claim": "true",
+                    "access.token.claim": "true"
+                  }
+                },
+                {
+                  "name": "username",
+                  "protocol": "openid-connect",
+                  "protocolMapper": "oidc-usermodel-property-mapper",
+                  "consentRequired": false,
+                  "config": {
+                    "user.attribute": "username",
+                    "claim.name": "preferred_username",
+                    "jsonType.label": "String",
+                    "id.token.claim": "true",
+                    "access.token.claim": "true"
+                  }
+                }
+              ]
+            }
+          ],
+          "users": [
+            {
+              "username": "user",
+              "enabled": true,
+              "email": "user@example.com",
+              "firstName": "User",
+              "lastName": "Example",
+              "emailVerified": true,
+              "credentials": [
+                {
+                  "type": "password",
+                  "value": "password",
+                  "temporary": false
+                }
+              ]
+            }
+          ],
+          "smtpServer": {
+            "host": "",
+            "port": "",
+            "from": "",
+            "fromDisplayName": "",
+            "replyTo": "",
+            "replyToDisplayName": "",
+            "envelopeFrom": ""
+          }
+        }
+
+# Unpack the theme archive into /opt/keycloak/themes before Keycloak starts
+extraInitContainers:
+  - name: unpack-keycloak-theme
+    image: busybox:1.36
+    command: ["/bin/sh", "-c"]
+    args:
+      - |
+        set -e
+        mkdir -p /opt/keycloak/themes
+        tar -xzf /config/tfm-theme.tar.gz -C /opt/keycloak/themes --strip-components=1
+    volumeMounts:
+      - name: keycloak-theme-archive
+        mountPath: /config
+      - name: keycloak-theme-workdir
+        mountPath: /opt/keycloak/themes

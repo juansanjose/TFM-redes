@@ -40,6 +40,44 @@ apiVersion: v1
 automountServiceAccountToken: true
 kind: ServiceAccount
 metadata:
+  labels:
+    app: argocd
+    app.kubernetes.io/component: dex-server
+    app.kubernetes.io/instance: argocd
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: argocd-dex-server
+    app.kubernetes.io/part-of: argocd
+    app.kubernetes.io/version: v3.2.1
+    helm.sh/chart: argo-cd-9.1.5
+    tfm/cluster-group: argocd
+    tfm/cluster-role: cluster-management
+    tfm/name: argocd
+  name: argocd-dex-server
+  namespace: argocd
+---
+apiVersion: v1
+automountServiceAccountToken: true
+kind: ServiceAccount
+metadata:
+  labels:
+    app: argocd
+    app.kubernetes.io/component: notifications-controller
+    app.kubernetes.io/instance: argocd
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: argocd-notifications-controller
+    app.kubernetes.io/part-of: argocd
+    app.kubernetes.io/version: v3.2.1
+    helm.sh/chart: argo-cd-9.1.5
+    tfm/cluster-group: argocd
+    tfm/cluster-role: cluster-management
+    tfm/name: argocd
+  name: argocd-notifications-controller
+  namespace: argocd
+---
+apiVersion: v1
+automountServiceAccountToken: true
+kind: ServiceAccount
+metadata:
   annotations:
     helm.sh/hook: pre-install,pre-upgrade
     helm.sh/hook-delete-policy: before-hook-creation
@@ -260,6 +298,88 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
+  labels:
+    app: argocd
+    app.kubernetes.io/component: dex-server
+    app.kubernetes.io/instance: argocd
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: argocd-dex-server
+    app.kubernetes.io/part-of: argocd
+    app.kubernetes.io/version: v3.2.1
+    helm.sh/chart: argo-cd-9.1.5
+    tfm/cluster-group: argocd
+    tfm/cluster-role: cluster-management
+    tfm/name: argocd
+  name: argocd-dex-server
+  namespace: argocd
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - secrets
+      - configmaps
+    verbs:
+      - get
+      - list
+      - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  labels:
+    app: argocd
+    app.kubernetes.io/component: notifications-controller
+    app.kubernetes.io/instance: argocd
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: argocd-notifications-controller
+    app.kubernetes.io/part-of: argocd
+    app.kubernetes.io/version: v3.2.1
+    helm.sh/chart: argo-cd-9.1.5
+    tfm/cluster-group: argocd
+    tfm/cluster-role: cluster-management
+    tfm/name: argocd
+  name: argocd-notifications-controller
+  namespace: argocd
+rules:
+  - apiGroups:
+      - argoproj.io
+    resources:
+      - applications
+      - appprojects
+    verbs:
+      - get
+      - list
+      - watch
+      - update
+      - patch
+  - apiGroups:
+      - ""
+    resources:
+      - configmaps
+      - secrets
+    verbs:
+      - list
+      - watch
+  - apiGroups:
+      - ""
+    resourceNames:
+      - argocd-notifications-cm
+    resources:
+      - configmaps
+    verbs:
+      - get
+  - apiGroups:
+      - ""
+    resourceNames:
+      - argocd-notifications-secret
+    resources:
+      - secrets
+    verbs:
+      - get
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
   annotations:
     helm.sh/hook: pre-install,pre-upgrade
     helm.sh/hook-delete-policy: before-hook-creation
@@ -398,6 +518,59 @@ kind: ClusterRole
 metadata:
   labels:
     app: argocd
+    app.kubernetes.io/component: notifications-controller
+    app.kubernetes.io/instance: argocd
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: argocd-notifications-controller
+    app.kubernetes.io/part-of: argocd
+    app.kubernetes.io/version: v3.2.1
+    helm.sh/chart: argo-cd-9.1.5
+    tfm/cluster-group: argocd
+    tfm/cluster-role: cluster-management
+    tfm/name: argocd
+  name: argocd-notifications-controller
+rules:
+  - apiGroups:
+      - argoproj.io
+    resources:
+      - applications
+      - appprojects
+    verbs:
+      - get
+      - list
+      - watch
+      - update
+      - patch
+  - apiGroups:
+      - ""
+    resources:
+      - configmaps
+      - secrets
+    verbs:
+      - list
+      - watch
+  - apiGroups:
+      - ""
+    resourceNames:
+      - argocd-notifications-cm
+    resources:
+      - configmaps
+    verbs:
+      - get
+  - apiGroups:
+      - ""
+    resourceNames:
+      - argocd-notifications-secret
+    resources:
+      - secrets
+    verbs:
+      - get
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app: argocd
     app.kubernetes.io/component: server
     app.kubernetes.io/instance: argocd
     app.kubernetes.io/managed-by: Helm
@@ -510,6 +683,58 @@ subjects:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
+  labels:
+    app: argocd
+    app.kubernetes.io/component: dex-server
+    app.kubernetes.io/instance: argocd
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: argocd-dex-server
+    app.kubernetes.io/part-of: argocd
+    app.kubernetes.io/version: v3.2.1
+    helm.sh/chart: argo-cd-9.1.5
+    tfm/cluster-group: argocd
+    tfm/cluster-role: cluster-management
+    tfm/name: argocd
+  name: argocd-dex-server
+  namespace: argocd
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: argocd-dex-server
+subjects:
+  - kind: ServiceAccount
+    name: argocd-dex-server
+    namespace: argocd
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  labels:
+    app: argocd
+    app.kubernetes.io/component: notifications-controller
+    app.kubernetes.io/instance: argocd
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: argocd-notifications-controller
+    app.kubernetes.io/part-of: argocd
+    app.kubernetes.io/version: v3.2.1
+    helm.sh/chart: argo-cd-9.1.5
+    tfm/cluster-group: argocd
+    tfm/cluster-role: cluster-management
+    tfm/name: argocd
+  name: argocd-notifications-controller
+  namespace: argocd
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: argocd-notifications-controller
+subjects:
+  - kind: ServiceAccount
+    name: argocd-notifications-controller
+    namespace: argocd
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
   annotations:
     helm.sh/hook: pre-install,pre-upgrade
     helm.sh/hook-delete-policy: before-hook-creation
@@ -610,6 +835,31 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: argocd-application-controller
+    namespace: argocd
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    app: argocd
+    app.kubernetes.io/component: notifications-controller
+    app.kubernetes.io/instance: argocd
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: argocd-notifications-controller
+    app.kubernetes.io/part-of: argocd
+    app.kubernetes.io/version: v3.2.1
+    helm.sh/chart: argo-cd-9.1.5
+    tfm/cluster-group: argocd
+    tfm/cluster-role: cluster-management
+    tfm/name: argocd
+  name: argocd-notifications-controller
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: argocd-notifications-controller
+subjects:
+  - kind: ServiceAccount
+    name: argocd-notifications-controller
     namespace: argocd
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -774,6 +1024,8 @@ data:
   repo.server: argocd-repo-server:8081
   reposerver.log.format: text
   reposerver.log.level: info
+  server.dex.server: https://argocd-dex-server:5556
+  server.dex.server.strict.tls: "false"
   server.log.format: text
   server.log.level: info
   server.repo.server.strict.tls: "false"
@@ -809,6 +1061,27 @@ metadata:
     tfm/cluster-role: cluster-management
     tfm/name: argocd
   name: argocd-gpg-keys-cm
+  namespace: argocd
+---
+apiVersion: v1
+data:
+  context: |
+    argocdUrl: https://argocd.example.com
+kind: ConfigMap
+metadata:
+  labels:
+    app: argocd
+    app.kubernetes.io/component: notifications-controller
+    app.kubernetes.io/instance: argocd
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: argocd-notifications-controller
+    app.kubernetes.io/part-of: argocd
+    app.kubernetes.io/version: v3.2.1
+    helm.sh/chart: argo-cd-9.1.5
+    tfm/cluster-group: argocd
+    tfm/cluster-role: cluster-management
+    tfm/name: argocd
+  name: argocd-notifications-cm
   namespace: argocd
 ---
 apiVersion: v1
@@ -934,6 +1207,26 @@ kind: Secret
 metadata:
   labels:
     app: argocd
+    app.kubernetes.io/component: notifications-controller
+    app.kubernetes.io/instance: argocd
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: argocd-notifications-controller
+    app.kubernetes.io/part-of: argocd
+    app.kubernetes.io/version: v3.2.1
+    helm.sh/chart: argo-cd-9.1.5
+    tfm/cluster-group: argocd
+    tfm/cluster-role: cluster-management
+    tfm/name: argocd
+  name: argocd-notifications-secret
+  namespace: argocd
+stringData: null
+type: Opaque
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  labels:
+    app: argocd
     app.kubernetes.io/component: server
     app.kubernetes.io/instance: argocd
     app.kubernetes.io/managed-by: Helm
@@ -978,6 +1271,41 @@ spec:
     tfm/cluster-role: cluster-management
     tfm/name: argocd
   type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: argocd
+    app.kubernetes.io/component: dex-server
+    app.kubernetes.io/instance: argocd
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: argocd-dex-server
+    app.kubernetes.io/part-of: argocd
+    app.kubernetes.io/version: v3.2.1
+    helm.sh/chart: argo-cd-9.1.5
+    tfm/cluster-group: argocd
+    tfm/cluster-role: cluster-management
+    tfm/name: argocd
+  name: argocd-dex-server
+  namespace: argocd
+spec:
+  ports:
+    - name: http
+      port: 5556
+      protocol: TCP
+      targetPort: http
+    - name: grpc
+      port: 5557
+      protocol: TCP
+      targetPort: grpc
+  selector:
+    app: argocd
+    app.kubernetes.io/instance: argocd
+    app.kubernetes.io/name: argocd-dex-server
+    tfm/cluster-group: argocd
+    tfm/cluster-role: cluster-management
+    tfm/name: argocd
 ---
 apiVersion: v1
 kind: Service
@@ -1058,7 +1386,6 @@ metadata:
   name: argocd-server
   namespace: argocd
 spec:
-  externalTrafficPolicy: Cluster
   ports:
     - name: http
       port: 80
@@ -1076,7 +1403,7 @@ spec:
     tfm/cluster-role: cluster-management
     tfm/name: argocd
   sessionAffinity: None
-  type: LoadBalancer
+  type: ClusterIP
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -1109,7 +1436,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/cmd-params: 414d9ad4fc5726e39b2535b633a58fe4b2bca693e9346b0cff9c6a7dc8d03465
+        checksum/cmd-params: bb1ca9fd399aeef50c0b05dffd4ec0fb51b09550c7e55d706439f24c45b0919b
       labels:
         app: argocd
         app.kubernetes.io/component: applicationset-controller
@@ -1391,6 +1718,320 @@ kind: Deployment
 metadata:
   labels:
     app: argocd
+    app.kubernetes.io/component: dex-server
+    app.kubernetes.io/instance: argocd
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: argocd-dex-server
+    app.kubernetes.io/part-of: argocd
+    app.kubernetes.io/version: v3.2.1
+    helm.sh/chart: argo-cd-9.1.5
+    tfm/cluster-group: argocd
+    tfm/cluster-role: cluster-management
+    tfm/name: argocd
+  name: argocd-dex-server
+  namespace: argocd
+spec:
+  replicas: 1
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      app: argocd
+      app.kubernetes.io/instance: argocd
+      app.kubernetes.io/name: argocd-dex-server
+      tfm/cluster-group: argocd
+      tfm/cluster-role: cluster-management
+      tfm/name: argocd
+  template:
+    metadata:
+      annotations:
+        checksum/cmd-params: bb1ca9fd399aeef50c0b05dffd4ec0fb51b09550c7e55d706439f24c45b0919b
+      labels:
+        app: argocd
+        app.kubernetes.io/component: dex-server
+        app.kubernetes.io/instance: argocd
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/name: argocd-dex-server
+        app.kubernetes.io/part-of: argocd
+        app.kubernetes.io/version: v3.2.1
+        helm.sh/chart: argo-cd-9.1.5
+        tfm/cluster-group: argocd
+        tfm/cluster-role: cluster-management
+        tfm/name: argocd
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app: argocd
+                    app.kubernetes.io/name: argocd-dex-server
+                    tfm/cluster-group: argocd
+                    tfm/cluster-role: cluster-management
+                    tfm/name: argocd
+                topologyKey: kubernetes.io/hostname
+              weight: 100
+      automountServiceAccountToken: true
+      containers:
+        - args:
+            - rundex
+          command:
+            - /shared/argocd-dex
+          env:
+            - name: ARGOCD_DEX_SERVER_LOGFORMAT
+              valueFrom:
+                configMapKeyRef:
+                  key: dexserver.log.format
+                  name: argocd-cmd-params-cm
+                  optional: true
+            - name: ARGOCD_DEX_SERVER_LOGLEVEL
+              valueFrom:
+                configMapKeyRef:
+                  key: dexserver.log.level
+                  name: argocd-cmd-params-cm
+                  optional: true
+            - name: ARGOCD_LOG_FORMAT_TIMESTAMP
+              valueFrom:
+                configMapKeyRef:
+                  key: log.format.timestamp
+                  name: argocd-cmd-params-cm
+                  optional: true
+            - name: ARGOCD_DEX_SERVER_DISABLE_TLS
+              valueFrom:
+                configMapKeyRef:
+                  key: dexserver.disable.tls
+                  name: argocd-cmd-params-cm
+                  optional: true
+          image: ghcr.io/dexidp/dex:v2.44.0
+          imagePullPolicy: IfNotPresent
+          name: dex-server
+          ports:
+            - containerPort: 5556
+              name: http
+              protocol: TCP
+            - containerPort: 5557
+              name: grpc
+              protocol: TCP
+            - containerPort: 5558
+              name: metrics
+              protocol: TCP
+          resources: {}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            seccompProfile:
+              type: RuntimeDefault
+          volumeMounts:
+            - mountPath: /shared
+              name: static-files
+            - mountPath: /tmp
+              name: dexconfig
+            - mountPath: /tls
+              name: argocd-dex-server-tls
+      dnsPolicy: ClusterFirst
+      initContainers:
+        - command:
+            - /bin/cp
+            - -n
+            - /usr/local/bin/argocd
+            - /shared/argocd-dex
+          image: quay.io/argoproj/argocd:v3.2.1
+          imagePullPolicy: IfNotPresent
+          name: copyutil
+          resources: {}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            seccompProfile:
+              type: RuntimeDefault
+          volumeMounts:
+            - mountPath: /shared
+              name: static-files
+            - mountPath: /tmp
+              name: dexconfig
+      nodeSelector:
+        kubernetes.io/os: linux
+      serviceAccountName: argocd-dex-server
+      terminationGracePeriodSeconds: 30
+      volumes:
+        - emptyDir: {}
+          name: static-files
+        - emptyDir: {}
+          name: dexconfig
+        - name: argocd-dex-server-tls
+          secret:
+            items:
+              - key: tls.crt
+                path: tls.crt
+              - key: tls.key
+                path: tls.key
+              - key: ca.crt
+                path: ca.crt
+            optional: true
+            secretName: argocd-dex-server-tls
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: argocd
+    app.kubernetes.io/component: notifications-controller
+    app.kubernetes.io/instance: argocd
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: argocd-notifications-controller
+    app.kubernetes.io/part-of: argocd
+    app.kubernetes.io/version: v3.2.1
+    helm.sh/chart: argo-cd-9.1.5
+    tfm/cluster-group: argocd
+    tfm/cluster-role: cluster-management
+    tfm/name: argocd
+  name: argocd-notifications-controller
+  namespace: argocd
+spec:
+  replicas: 1
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      app: argocd
+      app.kubernetes.io/instance: argocd
+      app.kubernetes.io/name: argocd-notifications-controller
+      tfm/cluster-group: argocd
+      tfm/cluster-role: cluster-management
+      tfm/name: argocd
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        checksum/cmd-params: bb1ca9fd399aeef50c0b05dffd4ec0fb51b09550c7e55d706439f24c45b0919b
+      labels:
+        app: argocd
+        app.kubernetes.io/component: notifications-controller
+        app.kubernetes.io/instance: argocd
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/name: argocd-notifications-controller
+        app.kubernetes.io/part-of: argocd
+        app.kubernetes.io/version: v3.2.1
+        helm.sh/chart: argo-cd-9.1.5
+        tfm/cluster-group: argocd
+        tfm/cluster-role: cluster-management
+        tfm/name: argocd
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app: argocd
+                    app.kubernetes.io/name: argocd-notifications-controller
+                    tfm/cluster-group: argocd
+                    tfm/cluster-role: cluster-management
+                    tfm/name: argocd
+                topologyKey: kubernetes.io/hostname
+              weight: 100
+      automountServiceAccountToken: true
+      containers:
+        - args:
+            - /usr/local/bin/argocd-notifications
+            - --metrics-port=9001
+            - --namespace=argocd
+            - --argocd-repo-server=argocd-repo-server:8081
+            - --secret-name=argocd-notifications-secret
+          env:
+            - name: ARGOCD_NOTIFICATIONS_CONTROLLER_LOGLEVEL
+              valueFrom:
+                configMapKeyRef:
+                  key: notificationscontroller.log.level
+                  name: argocd-cmd-params-cm
+                  optional: true
+            - name: ARGOCD_NOTIFICATIONS_CONTROLLER_LOGFORMAT
+              valueFrom:
+                configMapKeyRef:
+                  key: notificationscontroller.log.format
+                  name: argocd-cmd-params-cm
+                  optional: true
+            - name: ARGOCD_LOG_FORMAT_TIMESTAMP
+              valueFrom:
+                configMapKeyRef:
+                  key: log.format.timestamp
+                  name: argocd-cmd-params-cm
+                  optional: true
+            - name: ARGOCD_APPLICATION_NAMESPACES
+              valueFrom:
+                configMapKeyRef:
+                  key: application.namespaces
+                  name: argocd-cmd-params-cm
+                  optional: true
+            - name: ARGOCD_NOTIFICATION_CONTROLLER_SELF_SERVICE_NOTIFICATION_ENABLED
+              valueFrom:
+                configMapKeyRef:
+                  key: notificationscontroller.selfservice.enabled
+                  name: argocd-cmd-params-cm
+                  optional: true
+            - name: ARGOCD_NOTIFICATION_CONTROLLER_REPO_SERVER_PLAINTEXT
+              valueFrom:
+                configMapKeyRef:
+                  key: notificationscontroller.repo.server.plaintext
+                  name: argocd-cmd-params-cm
+                  optional: true
+          image: quay.io/argoproj/argocd:v3.2.1
+          imagePullPolicy: IfNotPresent
+          name: notifications-controller
+          ports:
+            - containerPort: 9001
+              name: metrics
+              protocol: TCP
+          resources: {}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            seccompProfile:
+              type: RuntimeDefault
+          volumeMounts:
+            - mountPath: /app/config/tls
+              name: tls-certs
+            - mountPath: /app/config/reposerver/tls
+              name: argocd-repo-server-tls
+          workingDir: /app
+      dnsPolicy: ClusterFirst
+      nodeSelector:
+        kubernetes.io/os: linux
+      serviceAccountName: argocd-notifications-controller
+      terminationGracePeriodSeconds: 30
+      volumes:
+        - configMap:
+            name: argocd-tls-certs-cm
+          name: tls-certs
+        - name: argocd-repo-server-tls
+          secret:
+            items:
+              - key: tls.crt
+                path: tls.crt
+              - key: tls.key
+                path: tls.key
+              - key: ca.crt
+                path: ca.crt
+            optional: true
+            secretName: argocd-repo-server-tls
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: argocd
     app.kubernetes.io/component: redis
     app.kubernetes.io/instance: argocd
     app.kubernetes.io/managed-by: Helm
@@ -1520,7 +2161,7 @@ spec:
     metadata:
       annotations:
         checksum/cm: 774dfe409162ad84a6faac862d0b05901672fa711c85ce5f9b62238a54876b2d
-        checksum/cmd-params: 414d9ad4fc5726e39b2535b633a58fe4b2bca693e9346b0cff9c6a7dc8d03465
+        checksum/cmd-params: bb1ca9fd399aeef50c0b05dffd4ec0fb51b09550c7e55d706439f24c45b0919b
       labels:
         app: argocd
         app.kubernetes.io/component: repo-server
@@ -1960,7 +2601,7 @@ spec:
     metadata:
       annotations:
         checksum/cm: 774dfe409162ad84a6faac862d0b05901672fa711c85ce5f9b62238a54876b2d
-        checksum/cmd-params: 414d9ad4fc5726e39b2535b633a58fe4b2bca693e9346b0cff9c6a7dc8d03465
+        checksum/cmd-params: bb1ca9fd399aeef50c0b05dffd4ec0fb51b09550c7e55d706439f24c45b0919b
       labels:
         app: argocd
         app.kubernetes.io/component: server
@@ -1993,7 +2634,6 @@ spec:
             - /usr/local/bin/argocd-server
             - --port=8080
             - --metrics-port=8083
-            - --insecure
           env:
             - name: ARGOCD_SERVER_NAME
               value: argocd-server
@@ -2439,7 +3079,7 @@ spec:
     metadata:
       annotations:
         checksum/cm: 774dfe409162ad84a6faac862d0b05901672fa711c85ce5f9b62238a54876b2d
-        checksum/cmd-params: 414d9ad4fc5726e39b2535b633a58fe4b2bca693e9346b0cff9c6a7dc8d03465
+        checksum/cmd-params: bb1ca9fd399aeef50c0b05dffd4ec0fb51b09550c7e55d706439f24c45b0919b
       labels:
         app: argocd
         app.kubernetes.io/component: application-controller
@@ -2887,56 +3527,3 @@ spec:
       restartPolicy: OnFailure
       serviceAccountName: argocd-redis-secret-init
   ttlSecondsAfterFinished: 60
----
-apiVersion: networking.gke.io/v1
-kind: ManagedCertificate
-metadata:
-  labels:
-    app: argocd
-    app.kubernetes.io/component: server
-    app.kubernetes.io/instance: argocd
-    app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/name: argocd-server
-    app.kubernetes.io/part-of: argocd
-    app.kubernetes.io/version: v3.2.1
-    helm.sh/chart: argo-cd-9.1.5
-    tfm/cluster-group: argocd
-    tfm/cluster-role: cluster-management
-    tfm/name: argocd
-  name: argocd-server
-  namespace: argocd
-spec:
-  domains:
-    - argocd.example.com
----
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  annotations:
-    networking.gke.io/managed-certificates: argocd-server
-  labels:
-    app: argocd
-    app.kubernetes.io/component: server
-    app.kubernetes.io/instance: argocd
-    app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/name: argocd-server
-    app.kubernetes.io/part-of: argocd
-    app.kubernetes.io/version: v3.2.1
-    helm.sh/chart: argo-cd-9.1.5
-    tfm/cluster-group: argocd
-    tfm/cluster-role: cluster-management
-    tfm/name: argocd
-  name: argocd-server
-  namespace: argocd
-spec:
-  rules:
-    - host: argocd.example.com
-      http:
-        paths:
-          - backend:
-              service:
-                name: argocd-server
-                port:
-                  number: 443
-            path: /
-            pathType: Prefix

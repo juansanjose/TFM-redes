@@ -1,0 +1,10 @@
+apiVersion: builtin
+kind: HelmChartInflationGenerator
+chartHome: ../../../../charts
+name: keycloak
+metadata:
+  name: keycloak-0.11.2
+namespace: keycloak
+releaseName: keycloak
+includeCRDs: true
+valuesFile: values.yaml
