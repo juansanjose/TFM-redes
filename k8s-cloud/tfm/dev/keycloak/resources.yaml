@@ -32629,7 +32629,7 @@ metadata:
 ---
 apiVersion: v1
 data:
-  db-password: NjVlYndGM25mZzFLUDZhOFExbWI4Z1dwbHZaUzRRMGc=
+  db-password: bnhIUEZSd0RuYzNKMDlwVjNHRHZTWEJDVWlzak9MYWw=
   db-username: cG9zdGdyZXM=
 kind: Secret
 metadata:
@@ -32651,8 +32651,8 @@ data:
   database: a2V5Y2xvYWs=
   host: a2V5Y2xvYWstcG9zdGdyZXMua2V5Y2xvYWsuc3Zj
   port: NTQzMg==
-  postgres-password: bHhvMUYwSXhJZmlJYWFNZndiTzVJWDhKVXpmUEFtUDk=
-  uri: cG9zdGdyZXNxbDovL3Bvc3RncmVzOmx4bzFGMEl4SWZpSWFhTWZ3Yk81SVg4SlV6ZlBBbVA5QGtleWNsb2FrLXBvc3RncmVzLmtleWNsb2FrLnN2Yzo1NDMyL2tleWNsb2Fr
+  postgres-password: V1V6TERrMURsQ2VpRHZ5Zmpaa3NXYXRUWW9FZkxySnI=
+  uri: cG9zdGdyZXNxbDovL3Bvc3RncmVzOldVekxEazFEbENlaUR2eWZqWmtzV2F0VFlvRWZMckpyQGtleWNsb2FrLXBvc3RncmVzLmtleWNsb2FrLnN2Yzo1NDMyL2tleWNsb2Fr
   username: cG9zdGdyZXM=
 kind: Secret
 metadata:

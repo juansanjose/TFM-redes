@@ -4,6 +4,10 @@ apps:
     autosync: false
     enabled: true
     prune: true
+  keycloak:
+    autosync: false
+    enabled: true
+    prune: true
 destination:
   name: tfm
 source:
