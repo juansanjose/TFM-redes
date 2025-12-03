@@ -269,6 +269,7 @@ metadata:
     tfm/cluster-group: keycloak
     tfm/name: keycloak
   name: keycloak-realm
+  namespace: keycloak
 ---
 apiVersion: v1
 binaryData:
@@ -32626,10 +32627,11 @@ metadata:
     tfm/cluster-group: keycloak
     tfm/name: keycloak
   name: keycloak-theme-archive
+  namespace: keycloak
 ---
 apiVersion: v1
 data:
-  db-password: bnhIUEZSd0RuYzNKMDlwVjNHRHZTWEJDVWlzak9MYWw=
+  db-password: OWVIcDU2cGJxaWNBZDhEQ043aXo1TWJ5cUlrMVJLelE=
   db-username: cG9zdGdyZXM=
 kind: Secret
 metadata:
@@ -32651,8 +32653,8 @@ data:
   database: a2V5Y2xvYWs=
   host: a2V5Y2xvYWstcG9zdGdyZXMua2V5Y2xvYWsuc3Zj
   port: NTQzMg==
-  postgres-password: V1V6TERrMURsQ2VpRHZ5Zmpaa3NXYXRUWW9FZkxySnI=
-  uri: cG9zdGdyZXNxbDovL3Bvc3RncmVzOldVekxEazFEbENlaUR2eWZqWmtzV2F0VFlvRWZMckpyQGtleWNsb2FrLXBvc3RncmVzLmtleWNsb2FrLnN2Yzo1NDMyL2tleWNsb2Fr
+  postgres-password: U0xaYjhlQ3N6WGRZMDloSmxqZ0RCRllXUjJVWDU3Rlg=
+  uri: cG9zdGdyZXNxbDovL3Bvc3RncmVzOlNMWmI4ZUNzelhkWTA5aEpsamdEQkZZV1IyVVg1N0ZYQGtleWNsb2FrLXBvc3RncmVzLmtleWNsb2FrLnN2Yzo1NDMyL2tleWNsb2Fr
   username: cG9zdGdyZXM=
 kind: Secret
 metadata:

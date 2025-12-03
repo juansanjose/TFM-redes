@@ -32,6 +32,7 @@ extraObjects:
     kind: ConfigMap
     metadata:
       name: keycloak-realm
+      namespace: keycloak
     data:
       realm-export.json: |
         {

@@ -6,6 +6,7 @@ generators:
 
 configMapGenerator:
   - name: keycloak-theme-archive
+    namespace: keycloak
     options:
       disableNameSuffixHash: true
     files:
