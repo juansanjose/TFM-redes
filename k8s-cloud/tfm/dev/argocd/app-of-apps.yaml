@@ -59,6 +59,7 @@ spec:
     directory:
       recurse: true
       jsonnet: {}
+      include: resources.yaml      # or: exclude: kustomization.yaml
   destination:
     namespace: argocd
     server: https://kubernetes.default.svc
