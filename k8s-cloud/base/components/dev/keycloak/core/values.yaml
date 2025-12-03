@@ -16,15 +16,13 @@ extraVolumes:
   - name: keycloak-theme-archive
     configMap:
       name: keycloak-theme-archive
-  - name: keycloak-theme-workdir
+  - name: keycloak-themes
     emptyDir: {}
 
 extraVolumeMounts:
   - name: realm-export
     mountPath: /opt/keycloak/data/import/realm-export.json
     subPath: realm-export.json
-  - name: keycloak-theme-workdir
-    mountPath: /opt/keycloak/themes
 
 # Create the ConfigMap with the realm export contents
 extraObjects:
@@ -231,5 +229,5 @@ extraInitContainers:
     volumeMounts:
       - name: keycloak-theme-archive
         mountPath: /config
-      - name: keycloak-theme-workdir
+      - name: keycloak-themes
         mountPath: /opt/keycloak/themes

@@ -32631,7 +32631,7 @@ metadata:
 ---
 apiVersion: v1
 data:
-  db-password: OWVIcDU2cGJxaWNBZDhEQ043aXo1TWJ5cUlrMVJLelE=
+  db-password: RThIQm1RMmxmSTBUb1N3WGVPRXVDajFDT3FLcXhaVGE=
   db-username: cG9zdGdyZXM=
 kind: Secret
 metadata:
@@ -32653,8 +32653,8 @@ data:
   database: a2V5Y2xvYWs=
   host: a2V5Y2xvYWstcG9zdGdyZXMua2V5Y2xvYWsuc3Zj
   port: NTQzMg==
-  postgres-password: U0xaYjhlQ3N6WGRZMDloSmxqZ0RCRllXUjJVWDU3Rlg=
-  uri: cG9zdGdyZXNxbDovL3Bvc3RncmVzOlNMWmI4ZUNzelhkWTA5aEpsamdEQkZZV1IyVVg1N0ZYQGtleWNsb2FrLXBvc3RncmVzLmtleWNsb2FrLnN2Yzo1NDMyL2tleWNsb2Fr
+  postgres-password: ZU56S1B1ZmwwTU1VZWFuakdhRDNueENIMkxUa1h5T0c=
+  uri: cG9zdGdyZXNxbDovL3Bvc3RncmVzOmVOektQdWZsME1NVWVhbmpHYUQzbnhDSDJMVGtYeU9HQGtleWNsb2FrLXBvc3RncmVzLmtleWNsb2FrLnN2Yzo1NDMyL2tleWNsb2Fr
   username: cG9zdGdyZXM=
 kind: Secret
 metadata:
@@ -32886,8 +32886,6 @@ spec:
             - mountPath: /opt/keycloak/data/import/realm-export.json
               name: realm-export
               subPath: realm-export.json
-            - mountPath: /opt/keycloak/themes
-              name: keycloak-theme-workdir
       initContainers:
         - command:
             - sh
@@ -32939,7 +32937,7 @@ spec:
             - mountPath: /config
               name: keycloak-theme-archive
             - mountPath: /opt/keycloak/themes
-              name: keycloak-theme-workdir
+              name: keycloak-themes
       securityContext:
         fsGroup: 1001
       serviceAccountName: default
@@ -32961,7 +32959,7 @@ spec:
             name: keycloak-theme-archive
           name: keycloak-theme-archive
         - emptyDir: {}
-          name: keycloak-theme-workdir
+          name: keycloak-themes
 ---
 apiVersion: apps/v1
 kind: StatefulSet
