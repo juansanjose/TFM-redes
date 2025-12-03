@@ -1,0 +1,10 @@
+project: default
+source:
+  repoUrl: git@github.com:juansanjose/TFM-redes.git
+  path: k8s-cloud/tfm/dev/applications
+  targetRevision: main
+  directory:
+    jsonnet: {}
+    include: '{resources.yaml,crds.yaml}'
+destination:
+  server: https://kubernetes.default.svc

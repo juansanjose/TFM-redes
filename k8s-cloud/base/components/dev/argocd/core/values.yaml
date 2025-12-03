@@ -15,3 +15,8 @@ server:
     controller: gke
   service:
     type: LoadBalancer
+
+repoServer:
+  env:
+    - name: ARGOCD_KUSTOMIZE_BUILD_OPTIONS
+      value: "--enable-helm"

@@ -1,0 +1,34 @@
+# apiVersion: argoproj.io/v1alpha1
+# kind: ApplicationSet
+# metadata:
+#   name: tfm
+#   namespace: argocd
+# spec:
+#   generators:
+#     - list:
+#         elements:
+#           - cluster: tfm
+#             url: https://kubernetes.default.svc
+#   template:
+#     metadata:
+#       name: tfm
+#     spec:
+#       project: devops
+#       source:
+#         path: k8s-cloud/tfm/applications
+#         repoURL: git@github.com:juansanjose/TFM-redes.git
+#         targetRevision: main
+#       destination:
+#         name: tfm
+#       syncPolicy:
+#         automated:
+#           prune: true
+#           selfHeal: true
+#         syncOptions:
+#           - CreateNamespace=true
+#         retry:
+#           limit: 2
+#           backoff:
+#             duration: 5s
+#             factor: 2
+#             maxDuration: 3m0s
