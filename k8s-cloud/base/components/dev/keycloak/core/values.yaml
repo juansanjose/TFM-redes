@@ -31,10 +31,10 @@ extraInitContainers:
       - |
         set -e
         if [ -d /opt/keycloak/themes ]; then
-          cp -a /opt/keycloak/themes/. /target-themes/
+          cp -r /opt/keycloak/themes/. /target-themes/
         fi
         if [ -d /opt/keycloak/providers ]; then
-          cp -a /opt/keycloak/providers/. /target-providers/
+          cp -r /opt/keycloak/providers/. /target-providers/
         fi
     volumeMounts:
       - name: keycloak-themes

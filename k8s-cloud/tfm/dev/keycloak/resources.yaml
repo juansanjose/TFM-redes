@@ -273,7 +273,7 @@ metadata:
 ---
 apiVersion: v1
 data:
-  db-password: MmR2ZkFhU2R3cGkyR3YwRVBFYjMzaVBjNXdpN3RJV2o=
+  db-password: Y1Y0TVdzU0cxNVhHdW1BWUwwazlLSW01QWtnNHg3U2w=
   db-username: cG9zdGdyZXM=
 kind: Secret
 metadata:
@@ -295,8 +295,8 @@ data:
   database: a2V5Y2xvYWs=
   host: a2V5Y2xvYWstcG9zdGdyZXMua2V5Y2xvYWsuc3Zj
   port: NTQzMg==
-  postgres-password: Z0FYT0pIdnZEWFN3U3FVY0lVVjVNYndCVjVtUXJuTjk=
-  uri: cG9zdGdyZXNxbDovL3Bvc3RncmVzOmdBWE9KSHZ2RFhTd1NxVWNJVVY1TWJ3QlY1bVFybk45QGtleWNsb2FrLXBvc3RncmVzLmtleWNsb2FrLnN2Yzo1NDMyL2tleWNsb2Fr
+  postgres-password: dkpYQ0llTmNoMkxTbEVESXkxOGNkRWdUY3hhSGV6cm4=
+  uri: cG9zdGdyZXNxbDovL3Bvc3RncmVzOnZKWENJZU5jaDJMU2xFREl5MThjZEVnVGN4YUhlenJuQGtleWNsb2FrLXBvc3RncmVzLmtleWNsb2FrLnN2Yzo1NDMyL2tleWNsb2Fr
   username: cG9zdGdyZXM=
 kind: Secret
 metadata:
@@ -569,10 +569,10 @@ spec:
             - |
               set -e
               if [ -d /opt/keycloak/themes ]; then
-                cp -a /opt/keycloak/themes/. /target-themes/
+                cp -r /opt/keycloak/themes/. /target-themes/
               fi
               if [ -d /opt/keycloak/providers ]; then
-                cp -a /opt/keycloak/providers/. /target-providers/
+                cp -r /opt/keycloak/providers/. /target-providers/
               fi
           command:
             - /bin/sh
