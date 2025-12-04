@@ -273,7 +273,25 @@ metadata:
 ---
 apiVersion: v1
 data:
-  db-password: Y1Y0TVdzU0cxNVhHdW1BWUwwazlLSW01QWtnNHg3U2w=
+  admin-password: NW5QVlBsMk9paVVqMmFFR2M0dmFNVUNCMmMzQjZtRVg=
+kind: Secret
+metadata:
+  labels:
+    app: keycloak
+    app.kubernetes.io/instance: keycloak
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: keycloak
+    app.kubernetes.io/version: 26.4.7
+    helm.sh/chart: keycloak-0.11.2
+    tfm/cluster-group: keycloak
+    tfm/name: keycloak
+  name: keycloak
+  namespace: keycloak
+type: Opaque
+---
+apiVersion: v1
+data:
+  db-password: U0hNcElCeEtBOThhdVBMMTNmYnNlUGdaZGZSajljYmY=
   db-username: cG9zdGdyZXM=
 kind: Secret
 metadata:
@@ -295,8 +313,8 @@ data:
   database: a2V5Y2xvYWs=
   host: a2V5Y2xvYWstcG9zdGdyZXMua2V5Y2xvYWsuc3Zj
   port: NTQzMg==
-  postgres-password: dkpYQ0llTmNoMkxTbEVESXkxOGNkRWdUY3hhSGV6cm4=
-  uri: cG9zdGdyZXNxbDovL3Bvc3RncmVzOnZKWENJZU5jaDJMU2xFREl5MThjZEVnVGN4YUhlenJuQGtleWNsb2FrLXBvc3RncmVzLmtleWNsb2FrLnN2Yzo1NDMyL2tleWNsb2Fr
+  postgres-password: TjkwVUFoQkl5RXp0QklxWDBNS0hub0ZJS2w4RWlUNnU=
+  uri: cG9zdGdyZXNxbDovL3Bvc3RncmVzOk45MFVBaEJJeUV6dEJJcVgwTUtIbm9GSUtsOEVpVDZ1QGtleWNsb2FrLXBvc3RncmVzLmtleWNsb2FrLnN2Yzo1NDMyL2tleWNsb2Fr
   username: cG9zdGdyZXM=
 kind: Secret
 metadata:

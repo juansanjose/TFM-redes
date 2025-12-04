@@ -8,7 +8,6 @@ image:
 
 keycloak:
   adminUser: admin
-  existingSecret: keycloak
   # Import the realm export on startup
   extraArgs:
     - "--import-realm"
