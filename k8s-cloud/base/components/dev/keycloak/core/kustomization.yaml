@@ -3,11 +3,3 @@ kind: Component
 
 generators:
   - generator.yaml
-
-configMapGenerator:
-  - name: keycloak-theme-archive
-    namespace: keycloak
-    options:
-      disableNameSuffixHash: true
-    files:
-      - tfm-theme.tar.gz
